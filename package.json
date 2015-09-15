@@ -1,0 +1,10 @@
+{
+	"name":"TxtMaker",
+	"main":"./index.html",
+	"icon":"icon.png",
+	"icon_color":"orange",
+	"version":"0.0.1",
+	"author":"Jonathan Ward",
+	"website":"http://github.com/FabMo/",
+	"description":"TxtMaker"
+}
