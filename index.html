@@ -6,7 +6,7 @@
       <link rel='stylesheet' href='css/nprogress.css'/>
 	</head>
 
-<body onload="loadtxt()">
+<body onload="loadfont(); loadtxt();">
 	
       <script type="text/javascript" src="js/opentype.min.js"></script>
       <script type="text/javascript" src="js/processing.min.js"></script>
@@ -15,6 +15,42 @@
       <script type="text/javascript" src="js/nprogress.js"></script>
       <script type="text/javascript" src="js/dashboard.js"></script>
       <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+
+<control>
+<input type="text" name="txt" id="textbox" value="txt">
+<button onclick="loadtxt();">draw</button>
+<!--<button type="submit" id="file">draw</button>-->
+<input type="file" id="file" />
+
+</control>
+
+
+<script type="text/javascript">
+
+  function onReadFile(evt) {
+    var f = evt.target.files[0]; 
+
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+	     var contents = e.target.result;
+        
+        font = opentype.parse(e.target.result);
+        alert( "Load New Font");
+        onFontLoaded(font);
+
+      }
+      r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }
+  r.readAsArrayBuffer(f);
+
+  }
+
+document.getElementById('file').addEventListener('change', onReadFile, false);
+</script>
+
 
 <script>
 
@@ -45,8 +81,7 @@ h = h*sf-30;
 
 var obj2 = {make:function() {
     obj.gcode=true;
-    //console.log(obj.gcode);
-    //obj.gcode=false;
+
 }}
 
 var gui1 = new dat.GUI();
@@ -80,28 +115,40 @@ var yc = [""];
 
 var g = [" "];
 
+var fontFileName;
+
+function loadfont() {
+fontFileName = 'fonts/Roboto-Black.ttf';
+}
 
 function loadtxt() {
 
+
 NProgress.start();
 
-//var txt = "fab";
-var txt = document.getElementById("textbox").value;
-
-opentype.load('fonts/Roboto-Black.ttf', function(err, font) {
+opentype.load(fontFileName, function(err, font) {
     if (err) {
          alert('Font could not be loaded: ' + err);
     } else {
  
 
 NProgress.set(0.5)
+onFontLoaded(font);
 
+}
+
+
+});
+
+}
+
+
+function onFontLoaded(font) {
+
+var txt = document.getElementById("textbox").value;
 var path = font.getPath(txt, 0, h, sf*obj.txtheight);
 var svg = path.toSVG(2);
 var len = Snap.path.getTotalLength(svg).toFixed(0);
-
-
-//console.log(len);
 
 
 for (i2 = 0; i2 <= len; i2=i2+1) {
@@ -124,10 +171,13 @@ yc = y;
 x = []; 
 y = [];
 svg = [];      
-    }
-});
+
 
 }
+
+//var fileButton = document.getElementById('file');
+//fileButton.addEventListener('change', onReadFile, false);
+
 </script>
 
 <script type="application/processing" data-processing-target="mycanvas">
@@ -254,9 +304,7 @@ s=[];
 
 }
 
-
 void header(){
-
 
 //gcode header
 //gcode = splice(gcode,"(units=mm/min)",1);
@@ -268,7 +316,6 @@ gcode = splice(gcode,"m4",1);//turn on router
 
 }
 
-
 void footer()
 {
 gcode = splice(gcode,"g1x" + x0 + "y" + y0 ,1);
@@ -278,17 +325,9 @@ gcode = splice(gcode,"g0x0y0",1);
 gcode = splice(gcode,"m30",1);
 }
 
-
 </script>
 
 <canvas id="mycanvas"> </canvas>
-
-<control>
-<input type="text" name="txt" id="textbox" value="txt">
-<button onclick="loadtxt()">draw</button> 
-</control>
-
-</form>
 
 </body>
 </html>
