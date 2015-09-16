@@ -25,7 +25,7 @@ gcode : false,
 feedrate : 800,
 plungerate : 300,
 cd : -2,
-texty : 3,
+texty : 5,
 xgrid : 25,
 
 }
@@ -214,28 +214,28 @@ header();
 for (int i = 0; i < xc.length-1; i = i+1) {
 
 if(i==0){
-gcode = splice(gcode,"g0x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h-yc[i])/sf, 1, 2) ,1);
+gcode = splice(gcode,"g0x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i])/sf, 1, 2) ,1);
 gcode = splice(gcode,"g1z" + obj.cd + "f" + obj.plungerate,1);
 gcode = splice(gcode,"f" + obj.feedrate,1);
 x0 = nf((xc[i]/sf),1,2);
-y0 = nf((h-yc[i])/sf,1,2);
+y0 = nf((h+obj.texty*sf-yc[i])/sf,1,2);
 }
 
 else if((abs(xc[i]-xc[i-1]) > 3) || (abs(yc[i]-yc[i-1]) > 3)){
 
 gcode = splice(gcode,"g1x" + x0 + "y" + y0 ,1);
 gcode = splice(gcode,"g0z4",1);
-gcode = splice(gcode,"g0x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h-yc[i])/sf, 1, 2) ,1);
+gcode = splice(gcode,"g0x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i])/sf, 1, 2) ,1);
 gcode = splice(gcode,"g1z" + obj.cd + "f" + obj.plungerate,1);
 gcode = splice(gcode,"f" + obj.feedrate,1);
 
 x0 = nf((xc[i]/sf),1,2);
-y0 = nf((h-yc[i])/sf,1,2);
+y0 = nf((h+obj.texty*sf-yc[i])/sf,1,2);
 
 }
 
 else{
-gcode = splice(gcode,"g1x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h-yc[i])/sf, 1, 2) ,1);
+gcode = splice(gcode,"g1x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i])/sf, 1, 2) ,1);
 }
 
 }
