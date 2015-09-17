@@ -17,25 +17,27 @@
       <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 
 <control>
-<input type="text" name="txt" id="textbox" value="txt">
-<button onclick="loadtxt();">draw</button>
-<input type="file" id="file" />
+<input type="text" name="txt" id="textbox" value="Txt">
+<button onclick="reload();">DRAW</button>
+<input type="file" id="file">LOAD FONT (TTF)</input>
 
 </control>
 
-
 <script type="text/javascript">
+var font;
+var click = 0;
 
-  function onReadFile(evt) {
+function onReadFile(evt) {
     var f = evt.target.files[0]; 
 
     if (f) {
+
       var r = new FileReader();
       r.onload = function(e) { 
 	     var contents = e.target.result;
         
         font = opentype.parse(e.target.result);
-        alert( "Load New Font");
+        alert( "RELOAD TEXT");
         onFontLoaded(font);
 
       }
@@ -44,10 +46,26 @@
       alert("Failed to load file");
     }
   r.readAsArrayBuffer(f);
+click=1;
+font=font;
+}
 
-  }
 
 document.getElementById('file').addEventListener('change', onReadFile, false);
+
+
+function reload(){
+if(click == 0){
+loadtxt();
+}
+else{
+onFontLoaded(font);
+}
+
+}
+
+
+
 </script>
 
 
@@ -55,16 +73,16 @@ document.getElementById('file').addEventListener('change', onReadFile, false);
 
 //dat gui
 var obj = {
-txtheight : 65,
+txtheight : 50,
 gcode : false,
 feedrate : 800,
 plungerate : 300,
 cd : -2,
-texty : 5,
-xgrid : 25,
+texty : 0,
+xgrid : 10,
+fontheight : 50,
 
 }
-
 
 var gcode = [" "];
 
@@ -76,10 +94,8 @@ var sf = window.innerHeight/h;
 w = w*sf;
 h = h*sf-30;
 
-
-
 var obj2 = {make:function() {
-    obj.gcode=true;
+obj.gcode=true;
 
 }}
 
@@ -89,11 +105,11 @@ var f1 = gui1.addFolder('setup');
 f1.add(obj, 'feedrate', 1, 2000).step(10).name('feedrate');
 f1.add(obj, 'plungerate', 1, 1000).step(10).name('plungerate');
 f1.add(obj, 'cd', -6, 0).name('cut depth');
-f1.add(obj, 'texty', 0, 200).name('Y position');
-f1.add(obj, 'xgrid', 5, 100).step(5).name('X grid spacing');
-var height = f1.add(obj, 'txtheight', 1, 250).step(1).name('text height');
+//f1.add(obj, 'texty', 0, 200).listen().name('Y position');
+f1.add(obj, 'xgrid', 5, 100).step(5).name('grid spacing');
+var height = f1.add(obj, 'fontheight', 1, 250).step(1).name('font size');
+f1.add(obj, 'txtheight', 1, 250).step(1).listen().name('text size');
 
-//f1.add(obj, 'scale', 0.1, 3).step(0.01).name('scale');
 
 gui1.add(obj2, 'make').name('MAKE TEXT');
 
@@ -101,17 +117,15 @@ f1.open();
 
 height.onFinishChange(function(value) {
 
-alert("Reload Text");
-loadtxt();
+alert("RELOAD TEXT");
+reload();
 
 });
-
 
 var x = [""];
 var y = [""];
 var xc = [""];
 var yc = [""];
-
 var g = [" "];
 
 var fontFileName;
@@ -122,41 +136,34 @@ fontFileName = 'fonts/Roboto-Black.ttf';
 
 function loadtxt() {
 
-
-NProgress.start();
-
-opentype.load(fontFileName, function(err, font) {
-    if (err) {
-         alert('Font could not be loaded: ' + err);
-    } else {
- 
-
-NProgress.set(0.5)
+opentype.load(fontFileName, function(err, font) 
+{
+if (err) 
+{
+alert('Font could not be loaded: ' + err);
+} 
+else  
+{
 onFontLoaded(font);
-
 }
-
-
 });
 
 }
 
-
 function onFontLoaded(font) {
-
+NProgress.start();
+NProgress.set(0.5)
 var txt = document.getElementById("textbox").value;
-var path = font.getPath(txt, 0, h, sf*obj.txtheight);
+var path = font.getPath(txt, 0, h, sf*obj.fontheight);
 var svg = path.toSVG(2);
 var len = Snap.path.getTotalLength(svg).toFixed(0);
 
-
 for (i2 = 0; i2 <= len; i2=i2+1) {
 
-   var one = Snap.path.getPointAtLength(svg, i2);
-//    var circle = paper.circle(one.x, one.y, 1);
-
-   x.splice(i2,0,one.x.toFixed(3));
-   y.splice(i2,0,one.y.toFixed(3));
+var one = Snap.path.getPointAtLength(svg, i2);
+//var circle = paper.circle(one.x, one.y, 1);
+x.splice(i2,0,one.x.toFixed(3));
+y.splice(i2,0,one.y.toFixed(3));
 
 }
 
@@ -169,13 +176,11 @@ yc = y;
 //console.log(y);
 x = []; 
 y = [];
-svg = [];      
+svg = [];
+yc[yc.length-1]="end";      
 
 
 }
-
-//var fileButton = document.getElementById('file');
-//fileButton.addEventListener('change', onReadFile, false);
 
 </script>
 
@@ -185,20 +190,25 @@ int xlength = 200;
 int ylength = y.length;
 
 //todo
-//load xy to array list for tabs and multipass
+//tabs and multipass
 float x0;
 float y0;
 
-ArrayList vx;
-ArrayList vy;
+int mx=10*sf;
+int my=10*sf;
+int ymax;
+int ymin;
 
+int texth;
 
+int [] yscale;
 
 void setup()
 {
 
 size(w,h);
 background(0,130,0);
+strokeJoin(ROUND);
  
 }
 
@@ -206,24 +216,39 @@ void draw()
 {  
 background(0,130,0);
 stroke(170);
+noFill();
 
-translate(10, 0-obj.texty*sf);
+
+ymin = min(yc);
+texth=int(h-ymin);
+obj.txtheight=texth/sf;
 
 strokeWeight(1);
-line(0,h-(obj.txtheight*sf),w,h-(obj.txtheight*sf));
 line(0,h,w,h);
 line(0,h,0,0);
 
 for(i=1; i<=w/obj.xgrid*sf; i++){
+line(0,h-i*obj.xgrid*sf,w,h-i*obj.xgrid*sf);
+}
+
+for(i=1; i<=h/obj.xgrid*sf; i++){
 line(i*obj.xgrid*sf,h,i*obj.xgrid*sf,0);
 }
 
-noFill();
-stroke(255);
+//translate(mx, 0-my+obj.texth*sf);
+
+translate(mx, 0-my-1.6*sf);
+
+stroke(255,0,0,220);
+strokeWeight(1);
+
+
+line(0,h+sf,20,h+sf);
+line(0,h-(texth+sf),20,h-(texth+sf));
+line(0,h+sf,0,h-(texth+sf));
+
+stroke(255,200);
 strokeWeight(1.6*sf);
-
-
-
 
 beginShape();
 for (int i = 0; i < xc.length-1; i = i+1) {
@@ -245,7 +270,6 @@ endShape(CLOSE);
 
 
 if(obj.gcode==true){
-
 makegcode();
 
 
@@ -289,6 +313,10 @@ gcode = splice(gcode,"g1x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i]
 
 }
 
+
+
+
+
 footer();
 
 String[] sa = reverse(gcode);
@@ -302,6 +330,16 @@ g=[];
 s=[];
 
 }
+
+void mouseClicked() {
+
+mx=mouseX;
+my=h-mouseY;
+
+}
+
+
+
 
 void header(){
 

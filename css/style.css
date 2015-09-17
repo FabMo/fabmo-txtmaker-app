@@ -23,6 +23,11 @@ a.startover:hover {
 color:#00ff00;
 }
 
+input {
+
+width: 110px;
+overflow:hidden;
+}
 
 a:hover {
 color:#FFFF00; 
