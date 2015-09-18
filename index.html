@@ -41,6 +41,7 @@ function onReadFile(evt) {
         onFontLoaded(font);
 
       }
+
       r.readAsText(f);
     } else { 
       alert("Failed to load file");
@@ -55,6 +56,7 @@ document.getElementById('file').addEventListener('change', onReadFile, false);
 
 
 function reload(){
+alert("RELOAD TEXT");
 if(click == 0){
 loadtxt();
 }
@@ -107,8 +109,9 @@ f1.add(obj, 'plungerate', 1, 1000).step(10).name('plungerate');
 f1.add(obj, 'cd', -6, 0).name('cut depth');
 //f1.add(obj, 'texty', 0, 200).listen().name('Y position');
 f1.add(obj, 'xgrid', 5, 100).step(5).name('grid spacing');
-var height = f1.add(obj, 'fontheight', 1, 250).step(1).name('font size');
 f1.add(obj, 'txtheight', 1, 250).step(1).listen().name('text size');
+var height = f1.add(obj, 'fontheight', 1, 250).step(1).name('font size');
+
 
 
 gui1.add(obj2, 'make').name('MAKE TEXT');
@@ -117,7 +120,7 @@ f1.open();
 
 height.onFinishChange(function(value) {
 
-alert("RELOAD TEXT");
+
 reload();
 
 });
@@ -199,6 +202,9 @@ int my=10*sf;
 int ymax;
 int ymin;
 
+int xo=0;
+int yo=0;
+
 int texth;
 
 int [] yscale;
@@ -218,14 +224,17 @@ background(0,130,0);
 stroke(170);
 noFill();
 
-
 ymin = min(yc);
 texth=int(h-ymin);
-obj.txtheight=texth/sf;
+obj.txtheight=(texth/sf)+1.6;
 
 strokeWeight(1);
 line(0,h,w,h);
 line(0,h,0,0);
+
+fill(255,255,0);
+ellipse(10*sf, h-10*sf, 2*sf, 2*sf);
+noFill();
 
 for(i=1; i<=w/obj.xgrid*sf; i++){
 line(0,h-i*obj.xgrid*sf,w,h-i*obj.xgrid*sf);
@@ -237,7 +246,9 @@ line(i*obj.xgrid*sf,h,i*obj.xgrid*sf,0);
 
 //translate(mx, 0-my+obj.texth*sf);
 
-translate(mx, 0-my-1.6*sf);
+translate(mx, 0-my-sf);
+
+
 
 stroke(255,0,0,220);
 strokeWeight(1);
@@ -287,34 +298,31 @@ header();
 for (int i = 0; i < xc.length-1; i = i+1) {
 
 if(i==0){
-gcode = splice(gcode,"g0x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i])/sf, 1, 2) ,1);
+gcode = splice(gcode,"g0x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
 gcode = splice(gcode,"g1z" + obj.cd + "f" + obj.plungerate,1);
 gcode = splice(gcode,"f" + obj.feedrate,1);
-x0 = nf((xc[i]/sf),1,2);
-y0 = nf((h+obj.texty*sf-yc[i])/sf,1,2);
+x0 = nf((xc[i]/sf)+xo,1,2);
+y0 = nf(((h+obj.texty*sf-yc[i])/sf)+yo,1,2);
 }
 
 else if((abs(xc[i]-xc[i-1]) > 3) || (abs(yc[i]-yc[i-1]) > 3)){
 
 gcode = splice(gcode,"g1x" + x0 + "y" + y0 ,1);
 gcode = splice(gcode,"g0z4",1);
-gcode = splice(gcode,"g0x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i])/sf, 1, 2) ,1);
+gcode = splice(gcode,"g0x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
 gcode = splice(gcode,"g1z" + obj.cd + "f" + obj.plungerate,1);
 gcode = splice(gcode,"f" + obj.feedrate,1);
 
-x0 = nf((xc[i]/sf),1,2);
-y0 = nf((h+obj.texty*sf-yc[i])/sf,1,2);
+x0 = nf((xc[i]/sf)+xo,1,2);
+y0 = nf(((h+obj.texty*sf-yc[i])/sf)+yo,1,2);
 
 }
 
 else{
-gcode = splice(gcode,"g1x" + nf(xc[i]/sf, 1, 2) + "y" + nf((h+obj.texty*sf-yc[i])/sf, 1, 2) ,1);
+gcode = splice(gcode,"g1x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
 }
 
 }
-
-
-
 
 
 footer();
@@ -335,6 +343,12 @@ void mouseClicked() {
 
 mx=mouseX;
 my=h-mouseY;
+
+xo=int((mx/sf)-(10));
+yo=int((my/sf)-(10));
+//println(xo);
+//println(yo);
+
 
 }
 
