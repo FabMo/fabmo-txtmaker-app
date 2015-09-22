@@ -56,7 +56,6 @@ document.getElementById('file').addEventListener('change', onReadFile, false);
 
 function reload(){
 
-
 alert("RELOAD TEXT");
 if(click == 0){
 loadtxt();
@@ -82,9 +81,13 @@ texty : 0,
 xgrid : 10,
 fontheight : 50,
 td : 1.6,
+border : 5,
+showborder : false,
+tabs : false,
 
 }
 
+var gc = [" "];
 var gcode = [" "];
 
 var w = 200;
@@ -99,26 +102,26 @@ var obj2 = {make:function() {
 obj.gcode=true;
 
 }}
-
 var gui1 = new dat.GUI();
 
 var f1 = gui1.addFolder('setup');
 f1.add(obj, 'feedrate', 1, 2000).step(10).name('feedrate');
 f1.add(obj, 'plungerate', 1, 1000).step(10).name('plungerate');
-f1.add(obj, 'cd', -6, 0).name('cut depth');
+f1.add(obj, 'td', 0.8, 12.6).step(0.8).name('tool diameter');
+f1.add(obj, 'cd', -25, 0).step(1).name('cut depth');
+f1.add(obj, 'border', 2, 50).step(1).name('frame offset');
+f1.add(obj, 'showborder').name('show frame');
+f1.add(obj, 'tabs').name('tabs');
 //f1.add(obj, 'texty', 0, 200).listen().name('Y position');
 f1.add(obj, 'xgrid', 5, 100).step(5).name('grid spacing');
 f1.add(obj, 'txtheight', 1, 250).step(1).listen().name('text size');
 var height = f1.add(obj, 'fontheight', 1, 250).step(1).name('font size');
-
-
 
 gui1.add(obj2, 'make').name('MAKE TEXT');
 
 f1.open();
 
 height.onFinishChange(function(value) {
-
 
 reload();
 
@@ -129,6 +132,10 @@ var y = [""];
 var xc = [""];
 var yc = [""];
 var g = [" "];
+var xm;
+var ym;
+var xi;
+
 
 var fontFileName;
 
@@ -164,14 +171,17 @@ for (i2 = 0; i2 <= len; i2=i2+1) {
 
 var one = Snap.path.getPointAtLength(svg, i2);
 //var circle = paper.circle(one.x, one.y, 1);
-x.splice(i2,0,one.x.toFixed(3));
-y.splice(i2,0,one.y.toFixed(3));
+x.splice(i2,0,one.x.toFixed(2));
+y.splice(i2,0,one.y.toFixed(2));
 
 }
 
 
 NProgress.done();
 
+xi = Math.min.apply(Math, x);
+xm = Math.max.apply(Math, x);
+ym = Math.max.apply(Math, y);
 xc = x;
 yc = y;
 //console.log(x);
@@ -179,16 +189,17 @@ yc = y;
 x = []; 
 y = [];
 svg = [];
-yc[yc.length-1]="end";      
+yc[yc.length-1]="end";
+xc[xc.length-1]="0";
+        
 
 }
 
 </script>
 
 <script type="application/processing" data-processing-target="mycanvas">
+////////////////////////////////////////////////////////////////////////
 
-int xlength = 200;
-int ylength = y.length;
 
 //todo
 //tabs and multipass
@@ -199,15 +210,33 @@ int mx=10*sf;
 int my=10*sf;
 int ymax;
 int ymin;
+int xmax;
+int xmin;
 
 int xo=0;
 int yo=0;
 
-int pn=1;//pass no
+int i0=0;
+int i1=0;
+
+ArrayList vx;
+ArrayList vy;
+
+String[] pathx;
+String[] pathy;
+
+String[] xp = {};
+String[] yp = {};
+
+float pn;//pass no
+int pd;//pass depth
+int p = 1;
 
 int texth;
 
 int [] yscale;
+int [] yscale;
+int [] outline;
 
 void setup()
 {
@@ -215,22 +244,40 @@ void setup()
 size(w,h);
 background(0,130,0);
 strokeJoin(ROUND);
+
+vx = new ArrayList();
+vy = new ArrayList();
  
 }
 
 void draw()
 {  
 background(0,130,0);
-
+rectMode(CORNERS);
 noFill();
 
+pn = ceil(abs(obj.cd)/obj.td);
+pd = nf((obj.cd/pn),1,2);
+
 ymin = min(yc);
+ymax = ((ym-h)/sf);
+xmin = min(xc);
+xmax = 140;
 texth=int(h-ymin);
 obj.txtheight=(texth/sf)+1.6;
 
+
 stroke(0,135,235);
 strokeWeight(4);
-rect((10*sf)-1,(h-10*sf)+1,150*sf,0-120*sf);
+rect((10*sf)-1,(h-10*sf)+1,150*sf,h-120*sf);
+
+if(obj.showborder==true){
+stroke(180);
+strokeWeight(2*sf);
+rect(round((mx+xi)-obj.border*sf),round(((h-my)+obj.border*sf)+(ymax*sf)),round((mx)+(xm)+(obj.border*sf)),round((h-my)-(obj.txtheight+obj.border)*sf));//border
+}
+
+
 
 stroke(170);
 strokeWeight(1);
@@ -249,9 +296,7 @@ for(i=1; i<=h/obj.xgrid*sf; i++){
 line(i*obj.xgrid*sf,h,i*obj.xgrid*sf,0);
 }
 
-//translate(mx, 0-my+obj.texth*sf);
-
-translate(mx, 0-my-sf);
+translate(mx, 0-my-((obj.td*sf)/2));
 
 stroke(255,0,0,220);
 strokeWeight(1);
@@ -261,89 +306,187 @@ line(0,h-(texth+sf),20,h-(texth+sf));
 line(0,h+sf,0,h-(texth+sf));
 
 stroke(255,200);
-strokeWeight(1.6*sf);
+strokeWeight(obj.td*sf);
 
 beginShape();
+
 for (int i = 0; i < xc.length-1; i = i+1) {
 
-if((abs(xc[i]-xc[i-1]) > 3) || (abs(yc[i]-yc[i-1]) > 3)){
+   if((abs(xc[i]-xc[i-1]) > 3) || (abs(yc[i]-yc[i-1]) > 3)){
 
-endShape(CLOSE);
-beginShape();
+      endShape(CLOSE);
+      beginShape();
+
+   }
+
+   else{
+      vertex(xc[i], yc[i]);
+   }
 
 }
 
-else{
-vertex(xc[i], yc[i]);
-}
-
-}
 endShape(CLOSE);
 
 
 
 if(obj.gcode==true){
 makegcode();
-
+makeg();
 
 obj.gcode=false;
 }
 
+}
 
+void go(){
+
+for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
+
+   if(i3==0){
+      //header
+      //gc = splice(gc," ",0);
+      gc = splice(gc,"g0z4",0);
+      gc = splice(gc,"g0x" + pathx[i3] + "y" + pathy[i3],0);
+      gc = splice(gc,"g1z" + pd + "f" + obj.plungerate,0);
+      gc = splice(gc,"f" + obj.feedrate,0);
+      //header
+   }
+
+   else{
+      gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
+   }
 
 }
 
+//multipass
+for (p; p <= pn; p++){
+
+   for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
+
+      if(i3==0){
+      //header
+      //gc = splice(gc," ",0);
+
+      gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
+      gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
+      gc = splice(gc,"f" + obj.feedrate,0);
+      //header
+      }
+
+
+      else{
+      gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
+      }
+
+   }
+
+
+}
+p=1
+
+}
+
+
+void makeg(){
+
+gc = splice(gc,"g21",0);
+gc = splice(gc,"g0z4",0);
+gc = splice(gc,"m4",0);
+gc = splice(gc,"g4p0.5",0);
+
+   for (int i = 0; i < vx.size() ; i++) {
+
+      pathx=vx.get(i);
+      pathy=vy.get(i);
+      go();
+
+   }
+
+gc = splice(gc,"g0z4",0);
+gc = splice(gc,"m5",0);
+gc = splice(gc,"g0x0y0",0);
+gc = splice(gc,"m30",0);
+
+
+String[] sa = reverse(gc);
+g = join(sa, "\n");
+console.log(sa);
+fabmoDashboard.submitJob(g, {filename : 'TxtMaker.g', name : 'TxtMaker', description : 'Generated by TxtMaker'});
+
+gc=[];
+g=[];
+s=[];
+
+vx.clear();
+vy.clear();
+
+}
+
+
+
 void makegcode(){
 
-header();
+//header();
 
 for (int i = 0; i < xc.length-1; i = i+1) {
 
 if(i==0){
-gcode = splice(gcode,"g0x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
-gcode = splice(gcode,"g1z" + obj.cd + "f" + obj.plungerate,1);
-gcode = splice(gcode,"f" + obj.feedrate,1);
-x0 = nf((xc[i]/sf)+xo,1,2);
-y0 = nf(((h+obj.texty*sf-yc[i])/sf)+yo,1,2);
+
+
+x0 = nf((xc[0]/sf)+xo,1,2);
+y0 = nf(((h+obj.texty*sf-yc[0])/sf)+yo,1,2);
+i0=i;
+
 }
 
 //move to next path
 else if((abs(xc[i]-xc[i-1]) > 3) || (abs(yc[i]-yc[i-1]) > 3)){
 
+int c = i0;
 
-if (abs(obj.pd)>(obj.td*pn)){
-//gcode = splice(gcode,"g1x" + x0 + "y" + y0 ,1);
-//gcode = splice(gcode,"g1z" + 0-(obj.td*pn) + "f" + obj.plungerate,1);
-//gcode = splice(gcode,"f" + obj.feedrate,1);
+while (i0 < i1) {
+
+if (i0==c){
+
+xp = splice(xp,x0,i1);
+yp = splice(yp,y0,i1);
+
 }
 
 else{
-gcode = splice(gcode,"g1x" + x0 + "y" + y0 ,1);
-gcode = splice(gcode,"g0z4",1);
-gcode = splice(gcode,"g0x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
-gcode = splice(gcode,"g1z" + obj.cd + "f" + obj.plungerate,1);
-gcode = splice(gcode,"f" + obj.feedrate,1);
-x0 = nf((xc[i]/sf)+xo,1,2);
-y0 = nf(((h+obj.texty*sf-yc[i])/sf)+yo,1,2);
+xp = splice(xp,nf((xc[i0]/sf)+xo, 1, 2),i1);
+yp = splice(yp,nf(((h+obj.texty*sf-yc[i0])/sf)+yo, 1, 2),i1);
 }
 
-}//
+i0++;
+
+}
+xp = splice(xp,x0,i1+1);
+yp = splice(yp,y0,i1+1);
+
+vx.add(xp);
+vy.add(yp);
+
+xp=[];
+yp=[];
+
+
+x0 = nf((xc[i]/sf)+xo,1,2);
+y0 = nf(((h+obj.texty*sf-yc[i])/sf)+yo,1,2);
+i0=i+1;
+
+}
 
 else{
 gcode = splice(gcode,"g1x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
+i1=i;
 }
 
 }
-
 
 footer();
 
-String[] sa = reverse(gcode);
-g = join(sa, "\n");
-
-fabmoDashboard.submitJob(g, {filename : 'TxtMaker.g', name : 'TxtMaker', description : 'Generated by TxtMaker'});
-
-
+gc=[];
 gcode=[];
 g=[];
 s=[];
@@ -357,34 +500,53 @@ my=h-mouseY;
 
 xo=int((mx/sf)-(10));
 yo=int((my/sf)-(10));
-//println(xo);
-//println(yo);
+
+outline = [round((mx/sf)-obj.border),round(my/sf)-obj.border,round((mx/sf)+(xm/sf)+obj.border),round((my/sf)+obj.txtheight+obj.border)]
+
+//h/sf
+//console.log((ym));
+println(outline);
+
+
 
 
 }
 
 
-
-
-void header(){
-
-//gcode header
-//gcode = splice(gcode,"(units=mm/min)",1);
-gcode = splice(gcode," ",1);//inch g20
-gcode = splice(gcode,"g21",1);//inch g20
-gcode = splice(gcode,"g0z4",1); //go safe height
-gcode = splice(gcode,"g0x0y0",1); //go home
-gcode = splice(gcode,"m4",1);//turn on router
-
-}
 
 void footer()
 {
-gcode = splice(gcode,"g1x" + x0 + "y" + y0 ,1);
-gcode = splice(gcode,"g0z4",1);
-gcode = splice(gcode,"m5",1);
-gcode = splice(gcode,"g0x0y0",1);
-gcode = splice(gcode,"m30",1);
+
+
+int c = i0;
+
+while (i0 < i1) {
+
+if (i0==c){
+
+xp = splice(xp,x0,i1);
+yp = splice(yp,y0,i1);
+
+}
+
+else{
+xp = splice(xp,nf((xc[i0]/sf)+xo, 1, 2),i1);
+yp = splice(yp,nf(((h+obj.texty*sf-yc[i0])/sf)+yo, 1, 2),i1);
+}
+
+i0++;
+
+}
+
+xp = splice(xp,x0,i1+1);
+yp = splice(yp,y0,i1+1);
+
+vx.add(xp);
+vy.add(yp);
+
+xp=[];
+yp=[];
+
 }
 
 </script>
