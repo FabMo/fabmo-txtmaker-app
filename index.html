@@ -84,10 +84,9 @@ fontheight : 50,
 td : 3.2,
 border : 7,
 showborder : true,
-tabs : false,
+tabs : true,
 mt : 7,
 chamfer : 3,
-
 }
 
 var gc = [" "];
@@ -120,7 +119,7 @@ f1.add(obj, 'tabs').name('tabs');
 
 var f2 = gui1.addFolder('TEXT');
 var height = f2.add(obj, 'fontheight', 10, 250).step(1).name('TEXT SIZE');
-f2.add(obj, 'cd', -25, 0).step(1).name('TEXT DEPTH');
+f2.add(obj, 'cd', -26, -1).step(1).name('TEXT DEPTH');
 f2.add(obj, 'showborder').name('CUTOUT FRAME');
 f2.add(obj, 'border', 2, 50).step(1).name('FRAME OFFSET');
 f2.add(obj, 'mt', 1, 26).step(1).name('MAT THICKNESS');
@@ -224,6 +223,9 @@ xc[xc.length-1]="0";
 float x0;
 float y0;
 
+float tabdepth;
+int tablength;
+
 int mx=10*sf;
 int my=10*sf;
 int ymax;
@@ -291,6 +293,9 @@ oy2 = round((h-my)-(obj.txtheight+obj.border)*sf);
 pn = ceil(abs(obj.cd)/obj.td);
 pn2 = ceil(abs(obj.mt)/obj.td);
 
+tabdepth = 0-(obj.mt*0.6);
+tablength = ceil(obj.td);
+
 pd = nf((obj.cd/pn),1,2);
 pd2 = (0-(nf((obj.mt/pn2),1,2)));
 
@@ -298,7 +303,6 @@ ymin = min(yc);
 ymax = ((ym-h)/sf);
 texth=int(h-ymin);
 obj.txtheight=(texth/sf)+1.6;
-
 
 stroke(0,135,235);
 strokeWeight(3);
@@ -443,10 +447,25 @@ gc = splice(gc,"g0z4",0);
 gc = splice(gc,"g0x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
 gc = splice(gc,"g1z" + pd2*p + "f" + obj.plungerate,0);
 gc = splice(gc,"f" + obj.feedrate,0);
+//tab
+   if(tabdepth>(pd2*p)){
+		gc = splice(gc,"g1x"+ ((xo+obj.chamfer+tablength)+(xi/sf)-obj.border),0);
+      gc = splice(gc,"g0z" + tabdepth,0);
+      gc = splice(gc,"g1x"+ ((xo+obj.chamfer+tablength*2.5)+(xi/sf)-obj.border),0);
+      gc = splice(gc,"g1z" + pd2*p + "f" + obj.plungerate,0);
+      gc = splice(gc,"f" + obj.feedrate,0);
+   }
 gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
 gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
 gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
 gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
+//tab
+   if(tabdepth>(pd2*p)){-	gc = splice(gc,"g1x"+ ((xo-obj.chamfer-tablength)+(xm/sf)+obj.border),0);
+      gc = splice(gc,"g0z" + tabdepth,0);
+      gc = splice(gc,"g1x"+ ((xo-obj.chamfer-tablength*2.5)+(xm/sf)+obj.border),0);
+      gc = splice(gc,"g1z" + pd2*p + "f" + obj.plungerate,0);
+      gc = splice(gc,"f" + obj.feedrate,0);
+   }
 gc = splice(gc,"g1x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);;
 gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
 gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
@@ -461,10 +480,26 @@ for (p; p <= pn2; p++){
 
 gc = splice(gc,"g1z" + pd2*p + "f" + obj.plungerate,0);
 gc = splice(gc,"f" + obj.feedrate,0);
+//tab
+   if(tabdepth>(pd2*p)){
+		gc = splice(gc,"g1x"+ ((xo+obj.chamfer+tablength)+(xi/sf)-obj.border),0);
+      gc = splice(gc,"g0z" + tabdepth,0);
+      gc = splice(gc,"g1x"+ ((xo+obj.chamfer+tablength*2.5)+(xi/sf)-obj.border),0);
+      gc = splice(gc,"g1z" + pd2*p + "f" + obj.plungerate,0);
+      gc = splice(gc,"f" + obj.feedrate,0);
+   }
 gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
 gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
 gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
 gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
+//tab
+   if(tabdepth>(pd2*p)){
+		gc = splice(gc,"g1x"+ ((xo-obj.chamfer-tablength)+(xm/sf)+obj.border),0);
+      gc = splice(gc,"g0z" + tabdepth,0);
+      gc = splice(gc,"g1x"+ ((xo-obj.chamfer-tablength*2.5)+(xm/sf)+obj.border),0);
+      gc = splice(gc,"g1z" + pd2*p + "f" + obj.plungerate,0);
+      gc = splice(gc,"f" + obj.feedrate,0);
+   }
 gc = splice(gc,"g1x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);;
 gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
 gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
@@ -576,12 +611,7 @@ my=h-mouseY;
 xo=int((mx/sf)-(10));
 yo=int((my/sf)-(10));
 
-
-
-//console.log(pn);
-//println(pn2);
-//println(pd2*pn2);
-
+//println(tablength);
 
 }
 
