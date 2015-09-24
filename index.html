@@ -40,14 +40,14 @@ function onReadFile(evt) {
         font = opentype.parse(e.target.result);
         alert( "LOADING TEXT");
         onFontLoaded(font);
-
+        
       }
+        r.readAsArrayBuffer(f);
 
-      r.readAsText(f);
     } else { 
       alert("Failed to load file");
     }
-  r.readAsArrayBuffer(f);
+
 click=1;
 font=font;
 }
@@ -75,16 +75,18 @@ onFontLoaded(font);
 var obj = {
 txtheight : 50,
 gcode : false,
-feedrate : 800,
-plungerate : 300,
+feedrate : 1000,
+plungerate : 500,
 cd : -2,
 texty : 0,
 xgrid : 10,
 fontheight : 50,
 td : 3.2,
 border : 6.5,
-showborder : false,
+showborder : true,
 tabs : false,
+mt : 13,
+chamfer : 3,
 
 }
 
@@ -106,22 +108,27 @@ obj.gcode=true;
 }}
 var gui1 = new dat.GUI();
 
-var f1 = gui1.addFolder('setup');
+var f1 = gui1.addFolder('ADVANCED SETTINGS');
 f1.add(obj, 'feedrate', 1, 2000).step(10).name('feedrate');
 f1.add(obj, 'plungerate', 1, 1000).step(10).name('plungerate');
 f1.add(obj, 'td', 0.8, 12.6).step(0.8).name('tool diameter');
-f1.add(obj, 'cd', -25, 0).step(1).name('cut depth');
-f1.add(obj, 'border', 2, 50).step(1).name('frame offset');
-f1.add(obj, 'showborder').name('show frame');
-f1.add(obj, 'tabs').name('tabs');
+f1.add(obj, 'mt', 1, 26).step(1).name('thickness');
 //f1.add(obj, 'texty', 0, 200).listen().name('Y position');
 f1.add(obj, 'xgrid', 5, 100).step(5).name('grid spacing');
 f1.add(obj, 'txtheight', 1, 250).step(1).listen().name('text size');
-var height = f1.add(obj, 'fontheight', 10, 250).step(1).name('font size');
+f1.add(obj, 'chamfer', 1, 10).step(1).name('chamfer');
+f1.add(obj, 'tabs').name('tabs');
+
+var f2 = gui1.addFolder('TEXT');
+var height = f2.add(obj, 'fontheight', 10, 250).step(1).name('TEXT SIZE');
+f2.add(obj, 'cd', -25, 0).step(1).name('TEXT DEPTH');
+f2.add(obj, 'showborder').name('CUTOUT FRAME');
+f2.add(obj, 'border', 2, 50).step(1).name('FRAME OFFSET');
+
 
 gui1.add(obj2, 'make').name('MAKE TEXT');
 
-f1.open();
+f2.open();
 
 height.onFinishChange(function(value) {
 
@@ -377,6 +384,7 @@ for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
    }
 
 }
+p=2;
 
 if(pn>1){
 //multipass
@@ -427,13 +435,17 @@ if (obj.showborder==true){
 
 //border
 gc = splice(gc,"g0z4",0);
-gc = splice(gc,"g0x"+ ((xo+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g0x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
 gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
 gc = splice(gc,"f" + obj.feedrate,0);
-gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
+gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
+gc = splice(gc,"g1x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);;
+gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
+gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
 
 p = 2;
 //
@@ -444,11 +456,14 @@ for (p; p <= pn; p++){
 
 gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
 gc = splice(gc,"f" + obj.feedrate,0);
-gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
-gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ ((xo+(xm/sf))+obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
+gc = splice(gc,"g1x"+ (((xo-obj.chamfer)+(xm/sf))+obj.border)  + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);
+gc = splice(gc,"g1x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border) + "y" + ((yo+((h/sf)-(ymin/sf)))+obj.border),0);;
+gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0);
+gc = splice(gc,"g1x"+ ((xo+(xi/sf))-obj.border)  + "y" + (((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0);
+gc = splice(gc,"g1x"+ (((xo+obj.chamfer)+(xi/sf))-obj.border)  + "y" + ((yo+((h/sf)-(ym/sf)))-obj.border),0);
 p = p++;
 
 }
