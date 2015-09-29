@@ -209,6 +209,7 @@ int ymax;
 int ymin;
 int xmax;
 int xmin;
+int tabno=4;//no of tabs
 
 int xo=0;
 int yo=0;
@@ -360,9 +361,9 @@ for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
    }
 
 //tabs
-	else if((i3==(round(pathx.length/2))) && (obj.tabs==true))
+	else if(((i3==(round(pathx.length/4))) && (obj.tabs==true)) || ((i3==(round(pathx.length/1.5))) && (obj.tabs==true)))
 	{
-		if (pd<texttabdepth){
+		if (pd*p<texttabdepth){
 	   	gc = splice(gc,"g0z"+ texttabdepth,0);
 			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
 		}
@@ -371,12 +372,13 @@ for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
 		}
 	}
 //
-	else if((i3==((round(pathx.length/2)+2))) && (obj.tabs==true))
+	else if(((i3==((round(pathx.length/4)+2))) && (obj.tabs==true)) || ((i3==((round(pathx.length/1.5)+2))) && (obj.tabs==true)))
 	{
-		if (pd<texttabdepth){
+		if (pd*p<texttabdepth){
 //	   	gc = splice(gc,"g0z"+ texttabdepth,0);
 			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
 	   	gc = splice(gc,"g1z" + pd + "f" + obj.plungerate,0);
+
 		}
 		else{
       	gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
@@ -391,6 +393,7 @@ for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
 }
 
 p=2;
+
 
 if(pn>1){
 //multipass
@@ -409,7 +412,7 @@ for (p; p <= pn; p++){
       }
 
 //tabs
-		else if((i3==(round(pathx.length/2))) && (obj.tabs==true))
+		else if(((i3==(round(pathx.length/4))) && (obj.tabs==true)) || ((i3==(round(pathx.length/1.5))) && (obj.tabs==true)))
 		{
 			if (pd*p<texttabdepth){
 	   		gc = splice(gc,"g0z"+ texttabdepth,0);
@@ -421,16 +424,17 @@ for (p; p <= pn; p++){
 			}
 		}
 //end tabs
-			else if((i3==((round(pathx.length/2)+2))) && (obj.tabs==true))
-	{
-		if (pd*p<texttabdepth){
-//	   	gc = splice(gc,"g0z"+ texttabdepth,0);
-			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-	   	gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
-		}
-		else{
-      	gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-		}
+			else if(((i3==((round(pathx.length/4)+2))) && (obj.tabs==true)) || ((i3==((round(pathx.length/1.5)+2))) && (obj.tabs==true)))
+            {
+      		if (pd*p<texttabdepth){
+      //	   	gc = splice(gc,"g0z"+ texttabdepth,0);
+      			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
+      	   	gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
+               gc = splice(gc,"f" + obj.feedrate,0);
+      		}
+      		else{
+              	gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
+		      }
 	}
 
       else{
