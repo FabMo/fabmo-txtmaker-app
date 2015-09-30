@@ -76,11 +76,11 @@ plungerate : 500,
 cd : -1,
 texty : 0,
 xgrid : 10,
-fontheight : 25,
-td : 1.6,
+fontheight : 65,
+td : 3.2,
 border : 7,
 showborder : false,
-tabs : false,
+tabs : true,
 mt : 7,
 chamfer : 3,
 rotate90 : false,
@@ -380,6 +380,7 @@ for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
 //	   	gc = splice(gc,"g0z"+ texttabdepth,0);
 			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
 	   	gc = splice(gc,"g1z" + pd + "f" + obj.plungerate,0);
+         gc = splice(gc,"f" + obj.feedrate,0);
 
 		}
 		else{
