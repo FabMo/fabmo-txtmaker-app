@@ -83,6 +83,7 @@ showborder : false,
 tabs : false,
 mt : 7,
 chamfer : 3,
+rotate90 : false,
 }
 
 var gc = [" "];
@@ -111,6 +112,7 @@ f1.add(obj, 'xgrid', 5, 100).step(5).name('grid spacing');
 f1.add(obj, 'txtheight', 1, 250).step(1).listen().name('text size');
 f1.add(obj, 'chamfer', 1, 10).step(1).name('chamfer');
 f1.add(obj, 'tabs').name('tabs');
+f1.add(obj, 'rotate90').name('rotate 90');
 
 var f2 = gui1.addFolder('TEXT');
 var height = f2.add(obj, 'fontheight', 10, 250).step(1).name('TEXT SIZE');
@@ -285,7 +287,7 @@ obj.txtheight=(texth/sf)+1.6;
 
 stroke(0,135,235);
 strokeWeight(3);
-rect((10*sf)-1,(h-10*sf)+1,150*sf,h-120*sf);
+rect((10*sf)-1,(h-10*sf)+1,150*sf,h-130*sf);
 
 if(obj.showborder==true){
    stroke(180);
@@ -459,8 +461,17 @@ gc = splice(gc,"g4p0.5",0);
 
    for (int i = (vx.size()-1); i >= 0 ; i--) {
 
-      pathx=vx.get(i);
-      pathy=vy.get(i);
+      if(obj.rotate90==true){
+         pathy=vx.get(i);
+         pathx=vy.get(i);
+            for (int i2 = 0; i2 < pathx.length; i2=i2+1) {
+               pathx[i2] = 0-pathx[i2]+obj.txtheight+yo*2;
+            }
+      }
+      else{
+         pathx=vx.get(i);
+         pathy=vy.get(i);      
+      }
       go();
 
    }
