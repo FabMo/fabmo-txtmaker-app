@@ -1,5 +1,5 @@
-partmaker.fma: clean *.html js/*.js css/*.css fonts/*.ttf icon.png package.json
-	zip txtmaker.fma *.html js/*.js css/*.css fonts/*.ttf *.pde icon.png package.json
+txtmaker.fma: clean *.html js/*.js js/libs/*.js css/*.css fonts/*.ttf icon.png package.json
+	zip txtmaker.fma *.html js/*.js js/libs/*.js css/*.css fonts/*.ttf icon.png package.json
 
 .PHONY: clean
 

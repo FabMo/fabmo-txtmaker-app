@@ -1,154 +1,429 @@
-<!doctype html>
-<html>
-	<head>
-		<title>TxtMaker</title>
-		<link rel="stylesheet" type="text/css" href="css/style.css">
-      <link rel="stylesheet" href="css/nprogress.css'"/>
-	</head>
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"/>
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
 
-<body onload="reload();">
-	
-      <script type="text/javascript" src="js/opentype.min.js"></script>
-      <script type="text/javascript" src="js/processing.min.js"></script>
-      <script type="text/javascript" src="js/dat.gui.min.js"></script>
-      <script type="text/javascript" src="js/snap.svg-min.js"></script>
-      <script type="text/javascript" src="js/nprogress.js"></script>
-      <script type="text/javascript" src="js/dashboard.js"></script>
-      <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 
-<control>
-<input type="text" name="txt" id="textbox" value="A">
-<button onclick="reload();">DRAW</button>
-<input type="file" id="file">LOAD FONT (TTF)</input>
 
-</control>
+<script type="text/javascript" src="js/libs/dashboard.js"></script>
+<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="js/control.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.5.js"></script>
+<script type="text/javascript" src="js/processing.min.js"></script>
+<script type="text/javascript" src="js/opentype.min.js"></script>
+<script type="text/javascript" src="js/snap.svg-min.js"></script>
+<script type="text/javascript" src="js/clipper.js"></script>
 
-<script type="text/javascript">
-var font;
-var click = 0;
 
-function onReadFile(evt) {
-    NProgress.start();
-    var f = evt.target.files[0]; 
+</head>
+<style>
 
-    if (f) {
-
-      var r = new FileReader();
-      r.onload = function(e) { 
-	     var contents = e.target.result;
-        
-        font = opentype.parse(e.target.result);
-        alert( "LOADING TEXT");
-        onFontLoaded(font);
-        
-      }
-        r.readAsArrayBuffer(f);
-
-    } else { 
-      alert("Failed to load file");
-    }
-
-click=1;
-font=font;
+#run{
+position: absolute;
+left: 0;
+top:0;
 }
 
-document.getElementById('file').addEventListener('change', onReadFile, false);
+#3D{
+
+position: absolute;
+top:0;
+left:0;
+}
+
+</style>
+
+<body onload="reload();">
+<div data-role="page" id="pagezero">
+  <div data-role="header">
+    <h1>SELECT A FONT</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero" class="ui-btn-active ui-state-persist">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();">TEXT</a></li>
+<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+<!--
+      <label for="text">TEXT:</label>
+      <input type="text" name="text" id="text" value="Hello!">
+-->
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="font">FONT</label>
+        <select name="font" id="font">
+          <option value="ChicagoFLF.ttf">Chicago</option>
+          <option value="junegull.ttf" selected>Junegull</option>          
+          <option value="newmars.ttf">New Mars</option>
+          <option value="Roboto-Black.ttf">Roboto</option>
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="size">FONT SIZE</label>
+        <select name="size" id="size">
+          <option value="12.6">1/2"</option>
+          <option value="25.4">1"</option>
+          <option value="50.8">2"</option>
+          <option value="76.2">3"</option>
+          <option value="101.6" selected>4"</option>
+          <option value="127">5"</option>
+          <option value="152.4">6"</option> 
+
+
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="materail">MATERIAL TYPE</label>
+        <select name="material" id="material">
+          <option value="plywood" selected>PLYWOOD</option>
+          <option value="wax">WAX</option>
+          <option value="hdpe">HDPE</option>
+          <option value="foam">FOAM</option>
+          <option value="pcb">PCB</option>
+          <option value="aluminum">ALUMINUM</option>
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="material">MATERIAL THICKNESS</label>
+        <select name="thickness" id="thickness">
+          <option value="0.073">1/16"</option>
+          <option value="0.135" selected>1/8"</option>
+          <option value="0.26">1/4"</option>
+          <option value="0.51">1/2"</option>
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="day">CUTTING TOOL</label>
+        <select name="tool" id="tool">
+          <option value="0.125" selected>1/8" ENDMILL</option>
+          <option value="0.25">1/4" ENDMILL</option>
+        </select>
+      </fieldset>
+    </form>
+</div>
+  <div data-role="footer" style="text-align:center;">
+    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-left">TEXT</a>
+  </div>
+</div> 
+
+<div data-role="page" id="pageone">
+  <div data-role="header">
+    <h1>PRESS A KEY</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();" class="ui-btn-active ui-state-persist">TEXT</a></li>
+<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+    <canvas id="2D" tabindex="1"> </canvas>
+  </div>
+  <div data-role="footer" style="text-align:center;">
+
+    <a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-left" onclick="make();">SUBMIT JOB</a>
+
+  </div>
+</div> 
+
+<!--
+
+<div data-role="page" id="pagetwo">
+  <div data-role="header">
+    <h1>SUBMIT JOB</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();">TEXT</a></li>
+        <li><a href="#pagetwo" class="ui-btn-active ui-state-persist">PREVIEW</a></li>
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+   <canvas id="3D">  </canvas>
+     </div>
+      <div data-role="footer" style="text-align:center;">
+    <a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-left" onclick="make();">SUBMIT JOB</a>
+  </div>
+</div> 
+-->
+
+<script type="application/processing" data-processing-target="2D">
+
+int verts = 100;
+int radius = 40;
+int sf2 = ($(window).innerHeight()-180)/document.getElementById("size").value;
+int sfx = 1;
+int x = 0;
+int y = 0;
+
+void setup(){
+   size($(window).innerWidth()-30,$(window).innerHeight()-180);
+   background(235);
+   noFill();
+   smooth();  
+   frameRate(4);
+   strokeCap(ROUND);
+   strokeWeight(1);
+   
+}
+
+void draw(){
+   background(235);
+   document.getElementById("2D").focus();
+   
+
+
+
+translate(50,height-height*0.1);
+scale(sf2,sf2);
+strokeWeight(1/sf2*2);
+
+for(i=0;i<dots.length;i++){
+
+
+   stroke(0);
+
+   strokeWeight(2/sf2);
+
+   beginShape();
+
+   for(j=0;j<dots[i].length;j++){
+         if(j==0){
+            stroke(255,0,0);
+//            ellipse(dots[i][j][0],dots[i][j][1],1.5,1.5);
+            vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         else if(j==1){
+            stroke(0,0,255);
+//            ellipse(dots[i][j][0],dots[i][j][1],1,1);
+            vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         else if(j!=dots[i].length-1){
+            stroke(0);
+//            ellipse(dots[i][j][0],dots[i][j][1],sf2*0.08,sf2*0.08);
+            vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         else{
+           vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         
+      
+   }
+
+
+endShape();
+
+
+
+}
+
+
+stroke(200,0,200);
+
+
+for(i=0;i<offsetted_paths.length;i++){
+
+   beginShape();
+      for(j=0;j<offsetted_paths[i].length;j++){
+         vertex(offsetted_paths[i][j].X/100,offsetted_paths[i][j].Y/100);
+      }
+   endShape();
+
+
+}
+
+
+}
+
+
+void heart(){
+   beginShape();
+      for (float i = 0; i <= verts; i = i+1) {
+         float T = (TWO_PI/verts*i);
+         float sint = sin(TWO_PI/verts*i), cost = cos(TWO_PI/verts*i);
+         float r = (sin(T) * sqrt(abs(cos(T))))/(sin(T)+ 1.4) - 2*sin(T) + 2+0.001;
+         x = (radius*2.5)+r*cos(T)*(radius*sf);
+         y = -height + (radius*sf*4)+r*sin(T)*(radius*sf);
+         vertex(x,y);
+      }
+   endShape();
+}
+
+
+void keyPressed() {
+
+
+   if (key == BACKSPACE){
+
+   }
+
+
+txt = String.fromCharCode(key);
+
+points = [];
+
+loadtxt();
+
+}
+
+
+void resizeSketch(){
+   size($(window).innerWidth()-30,$(window).innerHeight()-180);
+   sf2 = ($(window).innerHeight()-180)/document.getElementById("size").value;
+
+
+}
+
+$(window).resize(function() {	
+   resizeSketch();
+});
+
+
+</script>
+
+
+
+<script type="application/processing" data-processing-target="3D">
+
+height = $(window).innerHeight()-180;
+width = $(window).innerWidth()-30;
+sf = 1;
+
+
+void setup(){
+   size(width,height,P3D);
+   background(235);
+   noFill();
+   smooth();  
+   frameRate(4);
+   ortho(-width, width, -height, height, 0, 1000);
+}
+
+void draw(){
+
+   background(235);
+
+   sf = nf($(window).innerHeight()/200,0);
+   scale(sf,sf);
+   rotateY(-PI/10);
+   rotateX(PI/3);
+
+   translate(100,150,0);
+   
+
+   strokeWeight(2);
+   stroke(0,135,235);
+   box(150,300,25);
+
+   strokeWeight(1);
+   
+
+translate(-75,150,12.5);
+
+stroke(200,0,200);
+strokeWeight(2);
+
+for(i=0;i<offsetted_paths.length;i++){
+
+   beginShape();
+      for(j=0;j<offsetted_paths[i].length;j++){         
+         vertex(offsetted_paths[i][j].X/100,offsetted_paths[i][j].Y/100);
+      }
+   endShape();
+}
+
+strokeWeight(1);
+//noFill();
+
+}
+
+void resizeSketch(){
+   height = $(window).innerHeight()-180;
+   width = $(window).innerWidth()-30;
+}
+
+
+
+
+</script>
+
+
+
+<script>
+
+var g = "";
+var gcode = [];                      
+var paths = [];
+var shapes = [];
+var fontFileName;
+var points = [];
+var count = [];
+var svg = [];
+var test = [];
+var test2 = [];
+var len = [];
+var points = [];
+var txt = "?";
+var xy = [];
+var xy_offset = [];
+//var keyz;
+var oset = [[0,1]];
+var dots = [];
+
+var curve = "";
+var curve_length;
+var offsetted_paths = [];
+
 
 function reload(){
 
-alert("LOADING TEXT");
-if(click == 0){
-loadfont();
-loadtxt();
-}
-else{
-onFontLoaded(font);
-}
+//   var txt = document.getElementById("text").value;
+//alert(document.getElementById("font").value);   
+
+   points = [];
+   count = [];
+   shapes = [];
+   test = [];
+   test2 = [];
+   points = [];
+   path = "";
+   paths = [];
+   xy = [];
+   xy_offset = [];
+   dots = [];
+   svg = [];
+   offsetted_paths = [];
+   
+   loadfont();
+   loadtxt();
 
 }
-
-//dat gui
-var obj = {
-txtheight : 50,
-gcode : false,
-feedrate : 1000,
-plungerate : 500,
-cd : -1,
-texty : 0,
-xgrid : 10,
-fontheight : 65,
-td : 3.2,
-border : 7,
-showborder : false,
-tabs : true,
-mt : 7,
-chamfer : 3,
-rotate90 : false,
-}
-
-var gc = [" "];
-var gcode = [" "];
-
-var w = 200;
-var h = 150;
-var sl = obj.fontheight/10;
-
-var sf = window.innerHeight/h;
-
-w = w*sf;
-h = h*sf-30;
-
-var obj2 = {make:function() {
-obj.gcode=true;
-
-}}
-var gui1 = new dat.GUI();
-
-var f1 = gui1.addFolder('ADVANCED SETTINGS');
-f1.add(obj, 'feedrate', 1, 2000).step(10).name('feedrate');
-f1.add(obj, 'plungerate', 1, 1000).step(10).name('plungerate');
-f1.add(obj, 'td', 0.8, 12.6).step(0.8).name('tool diameter');
-f1.add(obj, 'xgrid', 5, 100).step(5).name('grid spacing');
-f1.add(obj, 'txtheight', 1, 250).step(1).listen().name('text size');
-f1.add(obj, 'chamfer', 1, 10).step(1).name('chamfer');
-f1.add(obj, 'tabs').name('tabs');
-f1.add(obj, 'rotate90').name('rotate 90');
-
-var f2 = gui1.addFolder('TEXT');
-var height = f2.add(obj, 'fontheight', 10, 250).step(1).name('TEXT SIZE');
-f2.add(obj, 'cd', -25, 1).step(1).name('TEXT DEPTH');
-f2.add(obj, 'showborder').name('CUTOUT FRAME');
-f2.add(obj, 'border', 2, 50).step(1).name('FRAME OFFSET');
-f2.add(obj, 'mt', 1, 26).step(1).name('MAT THICKNESS');
-
-
-gui1.add(obj2, 'make').name('MAKE TEXT');
-
-f2.open();
-
-height.onFinishChange(function(value) {
-
-reload();
-
-});
-
-var x = [""];
-var y = [""];
-var xc = [""];
-var yc = [""];
-var g = [" "];
-var xm;
-var ym;
-var xi;
-var yi;
-var fontFileName;
 
 function loadfont() {
-fontFileName = 'fonts/Roboto-Black.ttf';
+   fontFileName = 'fonts/' + document.getElementById("font").value;
+//   txt = txt;
 }
 
+
 function loadtxt() {
-NProgress.start();
    opentype.load(fontFileName, function(err, font) 
    {
 
@@ -162,534 +437,235 @@ NProgress.start();
 
 }
 
-
 function onFontLoaded(font) {
 
-NProgress.set(0.5)
-var txt = document.getElementById("textbox").value;
-var path = font.getPath(txt, 0, h, sf*obj.fontheight);
-var svg = path.toSVG(2);
-var len = Snap.path.getTotalLength(svg).toFixed(0);
-
-for (i2 = 0; i2 < len; i2=i2+sl) {
-   var one = Snap.path.getPointAtLength(svg, i2);
-   x.splice(i2,1,one.x.toFixed(2));
-   y.splice(i2,1,one.y.toFixed(2));
-}
-
-NProgress.done();
-
-yi = Math.min.apply(Math, y);
-xi = Math.min.apply(Math, x);
-xm = Math.max.apply(Math, x);
-ym = Math.max.apply(Math, y);
-xc = x;
-yc = y;
-x = []; 
-y = [];
-svg = [];
-yc[yc.length-1]="end";
-xc[xc.length-1]="0";
-        
-
-}
-
-</script>
-
-<script type="application/processing" data-processing-target="mycanvas">
-
-float x0;
-float y0;
-
-float texttabdepth;
-float tabdepth;
-int tablength;
-
-int mx=10*sf;
-int my=10*sf;
-int ymax;
-int ymin;
-int xmax;
-int xmin;
-int tabno=4;//no of tabs
-
-int xo=0;
-int yo=0;
-
-int i0=0;
-int i1=0;
-
-ArrayList vx;
-ArrayList vy;
-
-String[] pathx;
-String[] pathy;
-
-String[] xp = {};
-String[] yp = {};
-
-float pn;//# of passes
-float pn2;//pass no outline
-int pd2;//pass depth
-int pd;//pass depth
-int p = 1;//pass #
-
-int texth;
-
-int [] yscale;
-int [] yscale;
-int [] outline;
-
-int ox1;
-int oy1;
-int ox2;
-int oy2;
-
-void setup()
-{
-
-size(w,h);
-background(0,130,0);
-strokeJoin(ROUND);
-vx = new ArrayList();
-vy = new ArrayList();
- 
-}
-
-void draw() {
-
-  
-background(0,130,0);
-rectMode(CORNERS);
-noFill();
-
-sl = int(obj.fontheight/10);
-
-ox1 = round((mx+xi)-(obj.border*sf));
-oy1 = round(((h-my)+obj.border*sf)+(ymax*sf)-(obj.td/2)*sf);
-ox2 = round((mx)+(xm)+(obj.border*sf));
-oy2 = round((h-my)-(obj.txtheight+obj.border)*sf);
-
-pn = ceil(abs(obj.cd)/obj.td);
-pn2 = ceil(abs(obj.mt)/obj.td);
-
-texttabdepth = nf(obj.cd*0.7,0,2);
-tabdepth = nf(0-(obj.mt*0.8),0,2);
-tablength = ceil(obj.td);
-
-pd = nf((obj.cd/pn),1,2);
-pd2 = (0-(nf((obj.mt/pn2),1,2)));
-
-ymin = min(yc);
-ymax = ((ym-h)/sf);
-texth=int(h-ymin);
-obj.txtheight=(texth/sf)+1.6;
-
-stroke(0,135,235);
-strokeWeight(3);
-rect((10*sf)-1,(h-10*sf)+1,150*sf,h-130*sf);
-
-if(obj.showborder==true){
-   stroke(180);
-   strokeWeight(obj.td*sf);
-   rect(ox1,oy1,ox2,oy2);//border
-}
-
-stroke(170);
-strokeWeight(1);
-line(0,h,w,h);
-line(0,h,0,0);
-
-fill(255,255,0);
-ellipse(10*sf, h-10*sf, 2*sf, 2*sf);
-noFill();
-
-for(i=1; i<=w/obj.xgrid*sf; i++){
-   line(0,h-i*obj.xgrid*sf,w,h-i*obj.xgrid*sf);
-}
-
-for(i=1; i<=h/obj.xgrid*sf; i++){
-   line(i*obj.xgrid*sf,h,i*obj.xgrid*sf,0);
-}
-
-translate(mx, 0-my-((obj.td*sf)/2));
-
-stroke(255,0,0,220);
-strokeWeight(1);
-
-line(0,h+sf,20,h+sf);
-line(0,h-(texth+sf),20,h-(texth+sf));
-line(0,h+sf,0,h-(texth+sf));
-
-stroke(255,200);
-strokeWeight(obj.td*sf);
+//var txt = document.getElementById("text").value;
+var path = font.getPath(txt, 0, 0, document.getElementById("size").value);
 
 
-beginShape();
-
-for (int i = 0; i < xc.length-1; i = i+1) {
-
-   if((abs(xc[i]-xc[i-1]) > sl+1) || (abs(yc[i]-yc[i-1]) > sl+1)){
-      endShape(CLOSE);
-      beginShape();
-   }
-   else{
-      vertex(xc[i], yc[i]);
+for(i=0;i<path.commands.length;i++){
+   if(path.commands[i].type=="M"){
+   count.push(i);
    }
 }
 
-endShape(CLOSE);
-
-if(obj.gcode==true){
-   makegcode();
-   makeg();
-   obj.gcode=false;
-}
-
-}//end draw
-
-void go(){
-
-for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
-
-   if(i3==0){
-      //header
-      //gc = splice(gc," ",0);
-      gc = splice(gc,"g0z4",0);
-      gc = splice(gc,"g0x" + pathx[i3] + "y" + pathy[i3],0);
-      gc = splice(gc,"g1z" + pd + "f" + obj.plungerate,0);
-      gc = splice(gc,"f" + obj.feedrate,0);
-      //header
-   }
-
-//tabs
-	else if(((i3==(round(pathx.length/4))) && (obj.tabs==true)) || ((i3==(round(pathx.length/1.5))) && (obj.tabs==true)))
-	{
-		if (pd*p<texttabdepth){
-	   	gc = splice(gc,"g0z"+ texttabdepth,0);
-			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-		}
-		else{
-      	gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-		}
-	}
-//
-	else if(((i3==((round(pathx.length/4)+2))) && (obj.tabs==true)) || ((i3==((round(pathx.length/1.5)+2))) && (obj.tabs==true)))
-	{
-		if (pd*p<texttabdepth){
-//	   	gc = splice(gc,"g0z"+ texttabdepth,0);
-			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-	   	gc = splice(gc,"g1z" + pd + "f" + obj.plungerate,0);
-         gc = splice(gc,"f" + obj.feedrate,0);
-
-		}
-		else{
-      	gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-		}
-	}
-//end tabs
-
-   else{
-      gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-   }
-
-}
-
-p=2;
-
-
-if(pn>1){
-//multipass
-for (p; p <= pn; p++){
-
-   for (int i3 = 0; i3 < pathx.length; i3=i3+1) {
-
-      if(i3==0){
-      //header
-      //gc = splice(gc," ",0);
-
-      gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-      gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
-      gc = splice(gc,"f" + obj.feedrate,0);
-      //header
-      }
-
-//tabs
-		else if(((i3==(round(pathx.length/4))) && (obj.tabs==true)) || ((i3==(round(pathx.length/1.5))) && (obj.tabs==true)))
-		{
-			if (pd*p<texttabdepth){
-	   		gc = splice(gc,"g0z"+ texttabdepth,0);
-				gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-//	   		gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
-			}
-			else{
-      		gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-			}
-		}
-//end tabs
-			else if(((i3==((round(pathx.length/4)+2))) && (obj.tabs==true)) || ((i3==((round(pathx.length/1.5)+2))) && (obj.tabs==true)))
-            {
-      		if (pd*p<texttabdepth){
-      //	   	gc = splice(gc,"g0z"+ texttabdepth,0);
-      			gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-      	   	gc = splice(gc,"g1z" + pd*p + "f" + obj.plungerate,0);
-               gc = splice(gc,"f" + obj.feedrate,0);
-      		}
-      		else{
-              	gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-		      }
-	}
-
-      else{
-      gc = splice(gc,"g1x" + pathx[i3] + "y" + pathy[i3],0);
-      }
-
-   }
-}
-
-}
-p=1
-
-}
-
-
-void makeg(){
-
-gc = splice(gc,"g21",0);
-gc = splice(gc,"g0z4",0);
-gc = splice(gc,"m4",0);
-gc = splice(gc,"g4p0.5",0);
-
-   for (int i = (vx.size()-1); i >= 0 ; i--) {
-
-      if(obj.rotate90==true){
-         pathy=vx.get(i);
-         pathx=vy.get(i);
-            for (int i2 = 0; i2 < pathx.length; i2=i2+1) {
-               pathx[i2] = 0-pathx[i2]+obj.txtheight+yo*2;
-            }
-      }
-      else{
-         pathx=vx.get(i);
-         pathy=vy.get(i);      
-      }
-      go();
-
-   }
-
-if (obj.showborder==true){
-
-//border
-gc = splice(gc,"g0z4",0);
-gc = splice(gc,"g0x"+ nf((((xo+obj.chamfer)+(xi/sf))-obj.border),0,2) + "y" + nf(((yo+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1z" + nf(pd2*p,0,2) + "f" + obj.plungerate,0);
-gc = splice(gc,"f" + obj.feedrate,0);
-//tab
-
-   if(tabdepth>(pd2*p)){
-		gc = splice(gc,"g1x"+ nf(((xo+obj.chamfer+tablength)+(xi/sf)-obj.border),0,2),0);
-      gc = splice(gc,"g0z" + tabdepth,0);
-      gc = splice(gc,"g1x"+ nf(((xo+obj.chamfer+tablength*2.5)+(xi/sf)-obj.border),0,2),0);
-      gc = splice(gc,"g1z" + nf(pd2*p,0,2) + "f" + obj.plungerate,0);
-      gc = splice(gc,"f" + obj.feedrate,0);
-   }
-
-
-gc = splice(gc,"g1x"+ nf((((xo-obj.chamfer)+(xm/sf))+obj.border),0,2)  + "y" + nf(((yo+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf(((xo+(xm/sf))+obj.border),0,2)  + "y" + nf((((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf(((xo+(xm/sf))+obj.border),0,2)  + "y" + nf((((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf((((xo-obj.chamfer)+(xm/sf))+obj.border),0,2)  + "y" + nf(((yo+((h/sf)-(ymin/sf)))+obj.border),0,2),0);
-//tab
-
-   if(tabdepth>(pd2*p)){
-		gc = splice(gc,"g1x"+ nf(((xo-obj.chamfer-tablength)+(xm/sf)+obj.border),0,2),0);
-      gc = splice(gc,"g0z" + tabdepth,0);
-      gc = splice(gc,"g1x"+ nf(((xo-obj.chamfer-tablength*2.5)+(xm/sf)+obj.border),0,2),0);
-      gc = splice(gc,"g1z" + nf(pd2*p,0,2) + "f" + obj.plungerate,0);
-      gc = splice(gc,"f" + obj.feedrate,0);
-   }
-
-gc = splice(gc,"g1x"+ nf((((xo+obj.chamfer)+(xi/sf))-obj.border),0,2) + "y" + nf(((yo+((h/sf)-(ymin/sf)))+obj.border),0,2),0);;
-gc = splice(gc,"g1x"+ nf(((xo+(xi/sf))-obj.border),0,2)  + "y" + nf((((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf(((xo+(xi/sf))-obj.border),0,2)  + "y" + nf((((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf((((xo+obj.chamfer)+(xi/sf))-obj.border),0,2)  + "y" + nf(((yo+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-
-p = 2;
-//
-
-if(pn2>1){
-
-for (p; p <= pn2; p++){
-
-gc = splice(gc,"g1z" + nf(pd2*p,0,2) + "f" + obj.plungerate,0);
-gc = splice(gc,"f" + obj.feedrate,0);
-//
-   if(tabdepth>(pd2*p)){
-		gc = splice(gc,"g1x"+ nf(((xo+obj.chamfer+tablength)+(xi/sf)-obj.border),0,2),0);
-      gc = splice(gc,"g0z" + tabdepth,0);
-      gc = splice(gc,"g1x"+ nf(((xo+obj.chamfer+tablength*2.5)+(xi/sf)-obj.border),0,2),0);
-      gc = splice(gc,"g1z" + nf(pd2*p,0,2) + "f" + obj.plungerate,0);
-      gc = splice(gc,"f" + obj.feedrate,0);
-   }
-//
-gc = splice(gc,"g1x"+ nf((((xo-obj.chamfer)+(xm/sf))+obj.border),0,2)  + "y" + nf(((yo+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf(((xo+(xm/sf))+obj.border),0,2)  + "y" + nf((((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf(((xo+(xm/sf))+obj.border),0,2)  + "y" + nf((((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf((((xo-obj.chamfer)+(xm/sf))+obj.border),0,2)  + "y" + nf(((yo+((h/sf)-(ymin/sf)))+obj.border),0,2),0);
-//
-   if(tabdepth>(pd2*p)){
-		gc = splice(gc,"g1x"+ nf(((xo-obj.chamfer-tablength)+(xm/sf)+obj.border),0,2),0);
-     gc = splice(gc,"g0z" + tabdepth,0);
-      gc = splice(gc,"g1x"+ nf(((xo-obj.chamfer-tablength*2.5)+(xm/sf)+obj.border),0,2),0);
-      gc = splice(gc,"g1z" + nf(pd2*p,0,2) + "f" + obj.plungerate,0);
-      gc = splice(gc,"f" + obj.feedrate,0);
-   }
-//
-gc = splice(gc,"g1x"+ nf((((xo+obj.chamfer)+(xi/sf))-obj.border),0,2) + "y" + nf(((yo+((h/sf)-(ymin/sf)))+obj.border),0,2),0);;
-gc = splice(gc,"g1x"+ nf(((xo+(xi/sf))-obj.border),0,2)  + "y" + nf((((yo-obj.chamfer)+((h/sf)-(ymin/sf)))+obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf(((xo+(xi/sf))-obj.border),0,2)  + "y" + nf((((yo+obj.chamfer)+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-gc = splice(gc,"g1x"+ nf((((xo+obj.chamfer)+(xi/sf))-obj.border),0,2)  + "y" + nf(((yo+((h/sf)-(ym/sf)))-obj.border),0,2),0);
-p = p++;
-
-}
-
-}//multipass
-
-}//border
-
-gc = splice(gc,"g0z4",0);
-gc = splice(gc,"m5",0);
-gc = splice(gc,"g0x0y0",0);
-gc = splice(gc,"m30",0);
-
-
-String[] sa = reverse(gc);
-g = join(sa, "\n");
-fabmoDashboard.submitJob(g, {filename : 'TxtMaker.g', name : 'TxtMaker', description : 'Generated by TxtMaker'});
-
-gc=[];
-g=[];
-s=[];
-
-vx.clear();
-vy.clear();
-
-}
-
-void makegcode(){
-
-for (int i = 0; i < xc.length-1; i = i+1) {
+for(i=0;i<count.length;i++){
 
    if(i==0){
-
-      x0 = nf((xc[0]/sf)+xo,1,2);
-      y0 = nf(((h+obj.texty*sf-yc[0])/sf)+yo,1,2);
-      i0=i;
-
+      paths.push([path.commands.slice(0,count[i+1])]);
+   }
+   else if(i==count.length-1){
+      paths.push([path.commands.slice(count[i])]);
+   }
+   else{
+      paths.push([path.commands.slice(count[i],count[i+1])]);
    }
 
-   //move to next path
-   else if((abs(xc[i]-xc[i-1]) > sl*2) || (abs(yc[i]-yc[i-1]) > sl*2)){
+}
 
-      int c = i0;
+for(i=0;i<paths.length;i++){
+   shapes.push(paths[i]);
+}
 
-         while (i0 < i1) {
+for(i=0;i<shapes.length;i++){
+test.push({commands: shapes[i][0], fill: "black", stroke: null, strokeWidth: 1});
+}
 
-            if (i0==c){
+test2 = [];
+dots = [];
+var lines;
 
-               xp = splice(xp,x0,i1);
-               yp = splice(yp,y0,i1);
 
-            }           
+for(i=0;i<test.length;i++){
 
-            else{
-               xp = splice(xp,nf((xc[i0]/sf)+xo, 1, 2),i1);
-               yp = splice(yp,nf(((h+obj.texty*sf-yc[i0])/sf)+yo, 1, 2),i1);
-            }
+dots.push([]);
 
-         i0++;
+    for(i2=0;i2<test[i].commands.length;i2++){
+  
+      test2 += test[i].commands[i2].type + " ";
+   
+       if((test[i].commands[i2].type=="L") || (test[i].commands[i2].type=="M")){
+          test2 += test[i].commands[i2].x + " ";
+          test2 += test[i].commands[i2].y + " ";
+          dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y]);
+                
+       }  
 
+      if(test[i].commands[i2].type=="Q"){
+         test2 += test[i].commands[i2].x1 + " "; 
+         test2 += test[i].commands[i2].y1 + " ";
+         test2 += test[i].commands[i2].x + " "; 
+         test2 += test[i].commands[i2].y + " ";
+
+//            dots.push([test[i].commands[i2].x1,test[i].commands[i2].y1]);
+//            dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y]);
+         
+         curve += "M ";
+         curve += test[i].commands[i2-1].x + " ";
+         curve += test[i].commands[i2-1].y + " ";
+
+         curve += test[i].commands[i2].type + " ";
+         curve += test[i].commands[i2].x1 + " "; 
+         curve += test[i].commands[i2].y1 + " ";
+         curve += test[i].commands[i2].x + " "; 
+         curve += test[i].commands[i2].y + " ";
+
+//         console.log(curve);
+         curve_length = parseFloat(Snap.path.getTotalLength(curve).toFixed(0));
+//         console.log(curve_length);
+
+if(curve_length>1){
+         
+         for(j=1;j<curve_length;j=j+1){
+            dots[i].push([Snap.path.getPointAtLength(curve, j).x,Snap.path.getPointAtLength(curve, j).y]);
+//            console.log(dots);
          }
 
-   xp = splice(xp,x0,i1+1);
-   yp = splice(yp,y0,i1+1);
+}
 
-   vx.add(xp); 
-   vy.add(yp);
+            dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y]);
 
-   xp=[];
-   yp=[];
-
-
-   x0 = nf((xc[i]/sf)+xo,1,2);
-   y0 = nf(((h+obj.texty*sf-yc[i])/sf)+yo,1,2);
-   i0=i+1;
-
+         curve = "";
+         curve_length = 0;                 
+      } 
    }
+svg.push(test2);
 
-   else{
-      gcode = splice(gcode,"g1x" + nf((xc[i]/sf)+xo, 1, 2) + "y" + nf(((h+obj.texty*sf-yc[i])/sf)+yo, 1, 2) ,1);
-      i1=i;
+test2 = "";
+}
+
+
+var area = [];
+var sum = 0;
+var minx = [];
+var miny = [];
+var low = [];
+
+
+xy = [];
+
+for(i=0;i<points.length;i++){
+
+xy.push([]);
+
+minx.push([]);
+miny.push([]);
+
+   for(j=0;j<points[i].length;j++){
+
+      xy[i].push([parseFloat(points[i][j].x.toFixed(5)),parseFloat(points[i][j].y.toFixed(5))]);
+      minx[i].push([points[i][j].x])
+      miny[i].push([points[i][j].y])
    }
 
 }
 
-footer();
-
-gc=[];
-gcode=[];
-g=[];
-s=[];
-
-}
-
-void mouseClicked() {
-
-mx=mouseX;
-my=h-mouseY;
-xo=int((mx/sf)-(10));
-yo=int((my/sf)-(10));
-
-}
 
 
 
-void footer()
-{
+for(i=0;i<dots.length;i++){
 
-int c = i0;
+points.push([]);
 
-while (i0 < i1) {
+   for(j=0;j<dots[i].length;j++){
 
-   if (i0==c){
+points[i].push({X:dots[i][j][0],Y:dots[i][j][1]}); 
 
-      xp = splice(xp,x0,i1);
-      yp = splice(yp,y0,i1);
    }
 
-   else{
-      xp = splice(xp,nf((xc[i0]/sf)+xo, 1, 2),i1);
-      yp = splice(yp,nf(((h+obj.texty*sf-yc[i0])/sf)+yo, 1, 2),i1);
-   }
+}
 
-i0++;
+var tool_diameter=document.getElementById("tool").value;
+
+var scale = 100;
+ClipperLib.JS.ScaleUpPaths(points, scale);
+var co = new ClipperLib.ClipperOffset(2, 0.25);
+co.AddPaths(points, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
+offsetted_paths = new ClipperLib.Paths();
+
+co.Execute(offsetted_paths, (tool_diameter/2*25.4) * scale);
+
+for(i=0;i<offsetted_paths.length;i++){
+
+offsetted_paths[i].push(offsetted_paths[i][0]);
 
 }
 
-xp = splice(xp,x0,i1+1);
-yp = splice(yp,y0,i1+1);
+//console.log(offsetted_paths);
 
-vx.add(xp);
-vy.add(yp);
+xy_offset = [];
 
-xp=[];
-yp=[];
+   points = [];
+   count = [];
+   shapes = [];
+   test = [];
+   test2 = [];
+   path = " ";
+   paths = [];
+   shape = [];
+   len = [];
+   svg = [];
+
+}
+
+function set(){ 
+//   var txt = document.getElementById("text").value;
+}
+
+function make(){
+
+g="";
+
+//header
+g+="g21\n";
+g+="g0z5\n";
+g+="m4\n";
+g+="g4p2";
+
+
+//console.log(offsetted_paths);
+for(i=offsetted_paths.length-1;i>=0;i--){   
+
+//   gcode.push([]);
+
+   for(j=0;j<offsetted_paths[i].length;j++){
+
+      if(j==0){
+         g +="g0z5\n";
+         g += "g0x" + offsetted_paths[i][j].X/100 + "y" + (0-offsetted_paths[i][j].Y/100) + '\n';
+         g +="g1z-" + document.getElementById("thickness").value + "f500\n";
+         g +="g1f1500\n";         
+
+      }
+      
+      else{
+         g += "g1x" + offsetted_paths[i][j].X/100 + "y" + (0-offsetted_paths[i][j].Y/100) + '\n';
+      }
+
+
+   }
+
+   g +="g0z5\n";
+
+}
+
+g+="m5\n";
+g+="m30\n";
+
+
+//console.log(offsetted_paths);
+//console.log(gcode);
+//console.log(g);
+
+fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "character: " + txt, description : "font: " + document.getElementById("font").value});
+
+
 
 }
 
 </script>
 
-<canvas id="mycanvas"> </canvas>
 
 </body>
 </html>
+

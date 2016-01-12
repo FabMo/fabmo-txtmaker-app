@@ -2,8 +2,8 @@
 	"name":"TxtMaker",
 	"main":"./index.html",
 	"icon":"icon.png",
-	"icon_color":"orange",
-	"version":"0.0.1",
+	"icon_color":"white",
+	"version":"0.0.2",
 	"author":"Jonathan Ward",
 	"website":"http://github.com/FabMo/",
 	"description":"TxtMaker"
