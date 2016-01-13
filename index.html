@@ -5,16 +5,15 @@
 <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
 
 
-
-<script type="text/javascript" src="js/libs/dashboard.js"></script>
-<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
-<script type="text/javascript" src="js/control.js"></script>
-<script type="text/javascript" src="js/config.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.5.js"></script>
-<script type="text/javascript" src="js/processing.min.js"></script>
-<script type="text/javascript" src="js/opentype.min.js"></script>
-<script type="text/javascript" src="js/snap.svg-min.js"></script>
-<script type="text/javascript" src="js/clipper.js"></script>
+<script src="js/libs/dashboard.js"></script>
+<script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/control.js"></script>
+<script src="js/config.js"></script>
+<script src="js/jquery.mobile-1.4.5.js"></script>
+<script src="js/processing.min.js"></script>
+<script src="js/opentype.min.js"></script>
+<script src="js/snap.svg-min.js"></script>
+<script src="js/clipper.js"></script>
 
 
 </head>
@@ -49,6 +48,8 @@ left:0;
   </div>
   <div data-role="main" class="ui-content">
 <!--
+<textarea id="keyboard" placeholder="Enter Text..."></textarea>
+
       <label for="text">TEXT:</label>
       <input type="text" name="text" id="text" value="Hello!">
 -->
@@ -118,7 +119,7 @@ left:0;
     </form>
 </div>
   <div data-role="footer" style="text-align:center;">
-    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-left">TEXT</a>
+    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
   </div>
 </div> 
 
@@ -135,10 +136,18 @@ left:0;
   </div>
   <div data-role="main" class="ui-content">
     <canvas id="2D" tabindex="1"> </canvas>
+   <!--
+    <textarea id="keyboard" placeholder="Enter Text..."style="display: none;" ></textarea>
+   -->
+    <input type="text" id="keyboard" value="Hello!" style="display: none;"></input>
   </div>
   <div data-role="footer" style="text-align:center;">
+<!--
+    <textarea id="keyboard" placeholder="Enter Text..." style="display: none; visibility: hidden;" ></textarea>
+-->
+<a href="#pagetwo" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">KEYBOARD</a>
 
-    <a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-left" onclick="make();">SUBMIT JOB</a>
+    <a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
 
   </div>
 </div> 
@@ -164,6 +173,10 @@ left:0;
   </div>
 </div> 
 -->
+
+
+
+
 
 <script type="application/processing" data-processing-target="2D">
 
@@ -193,6 +206,7 @@ void setup(){
 void draw(){
    background(235);
    document.getElementById("2D").focus();
+   sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
    
 
 
@@ -217,7 +231,7 @@ line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
 fill(180,0,0,100);
-text(nf((abs(xmin)+xmax)/25.4,1,2) + " ", xmax/2-2, ymax+12);
+text(nf((xmax-xmin)/25.4,1,2) + " ", xmax/2-2, ymax+12);
 noFill();
 
 fill(0,100,0,100);
@@ -590,6 +604,12 @@ xmax = (Math.max.apply(Math, x));
 ymin = (Math.min.apply(Math, y));
 ymax = (Math.max.apply(Math, y));
 
+//console.log(ymin/25.4);
+//console.log(ymax/25.4);
+//console.log(xmin/25.4);
+//console.log(xmax/25.4-xmin/25.4);
+
+
 var tool_diameter=document.getElementById("tool").value;
 
 var scale = 100;
@@ -621,9 +641,6 @@ xy_offset = [];
 
 }
 
-function set(){ 
-//   var txt = document.getElementById("text").value;
-}
 
 function make(){
 
@@ -670,9 +687,17 @@ g+="m30\n";
 
 fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "character: " + txt, description : "font: " + document.getElementById("font").value});
 
-
-
 }
+
+
+
+$( "#keybutton" ).click(function() {
+
+txt = window.prompt("?");
+loadtxt();
+
+  
+});
 
 </script>
 
