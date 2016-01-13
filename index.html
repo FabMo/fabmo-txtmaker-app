@@ -169,7 +169,7 @@ left:0;
 
 int verts = 100;
 int radius = 40;
-int sf2 = ($(window).innerHeight()-180)/document.getElementById("size").value;
+int sf2 = ($(window).innerHeight()-250)/document.getElementById("size").value;
 int sfx = 1;
 int x = 0;
 int y = 0;
@@ -192,7 +192,7 @@ void draw(){
 
 
 
-translate(50,height-height*0.1);
+translate(50,height-height*0.25);
 scale(sf2,sf2);
 strokeWeight(1/sf2*2);
 
@@ -208,17 +208,17 @@ for(i=0;i<dots.length;i++){
    for(j=0;j<dots[i].length;j++){
          if(j==0){
             stroke(255,0,0);
-//            ellipse(dots[i][j][0],dots[i][j][1],1.5,1.5);
+            ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
             vertex(dots[i][j][0],dots[i][j][1]);
          }
          else if(j==1){
             stroke(0,0,255);
-//            ellipse(dots[i][j][0],dots[i][j][1],1,1);
+            ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
             vertex(dots[i][j][0],dots[i][j][1]);
          }
          else if(j!=dots[i].length-1){
             stroke(0);
-//            ellipse(dots[i][j][0],dots[i][j][1],sf2*0.08,sf2*0.08);
+//            ellipse(dots[i][j][0],dots[i][j][1],sf2*0.1,sf2*0.1);
             vertex(dots[i][j][0],dots[i][j][1]);
          }
          else{
@@ -247,6 +247,7 @@ for(i=0;i<offsetted_paths.length;i++){
       }
    endShape();
 
+sf2 = ($(window).innerHeight()-250)/document.getElementById("size").value;
 
 }
 
