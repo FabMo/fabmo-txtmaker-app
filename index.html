@@ -167,9 +167,13 @@ left:0;
 
 <script type="application/processing" data-processing-target="2D">
 
+
+
+//font = loadFont("FFScala.ttf"); 
+
 int verts = 100;
 int radius = 40;
-int sf2 = ($(window).innerHeight()-230)/document.getElementById("size").value;
+int sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
 int sfx = 1;
 int x = 0;
 int y = 0;
@@ -182,6 +186,7 @@ void setup(){
    frameRate(4);
    strokeCap(ROUND);
    strokeWeight(1);
+   textFont(createFont("Arial",4));
    
 }
 
@@ -192,8 +197,9 @@ void draw(){
 
 
 
-translate(50,height-height*0.25);
+translate(130,height-height*0.3);
 scale(sf2,sf2);
+
 
 
 stroke(0,100,0,100);
@@ -210,7 +216,13 @@ line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
+fill(180,0,0,100);
+text(nf(abs(xmax+xmin)/25.4,1,2) + " ", xmax/2-2, ymax+12);
+noFill();
 
+fill(0,100,0,100);
+text(nf((abs(ymin)+ymax)/25.4,1,2) + " ", xmin-16, ymin/2+2);
+noFill();
 
 strokeWeight(1/sf2*2);
 
@@ -263,7 +275,7 @@ for(i=0;i<offsetted_paths.length;i++){
       }
    endShape();
 
-sf2 = ($(window).innerHeight()-230)/document.getElementById("size").value;
+sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
 
 }
 
@@ -291,7 +303,7 @@ loadtxt();
 
 void resizeSketch(){
    size($(window).innerWidth()-30,$(window).innerHeight()-180);
-   sf2 = ($(window).innerHeight()-230)/document.getElementById("size").value;
+   sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
 
 
 }
