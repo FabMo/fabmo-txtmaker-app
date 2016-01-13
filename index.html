@@ -119,6 +119,8 @@ left:0;
     </form>
 </div>
   <div data-role="footer" style="text-align:center;">
+    <a href="#pagezero" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+
     <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
   </div>
 </div> 
@@ -146,11 +148,11 @@ left:0;
     <textarea id="keyboard" placeholder="Enter Text..." style="display: none; visibility: hidden;" ></textarea>
 -->
 
-<a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left">FULLSCREEN</a>
+<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
 
-<a href="#pagetwo" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">KEYBOARD</a>
+<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">KEYBOARD</a>
 
-    <a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
+    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
 
   </div>
 </div> 
@@ -532,6 +534,7 @@ points.push([]);
       points[i].push({X:dots[i][j][0],Y:dots[i][j][1]}); 
       x.push(dots[i][j][0]);
       y.push(dots[i][j][1]);
+
    }
 
 }
@@ -545,10 +548,10 @@ if(dots.length<1){
    ymax = 0;
 }
 else{
-xmin = (Math.min.apply(Math, x));
-xmax = (Math.max.apply(Math, x));
-ymin = (Math.min.apply(Math, y));
-ymax = (Math.max.apply(Math, y));
+   xmin = (Math.min.apply(Math, x));
+   xmax = (Math.max.apply(Math, x));
+   ymin = (Math.min.apply(Math, y));
+   ymax = (Math.max.apply(Math, y));
 }
 
 
@@ -642,12 +645,33 @@ fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, descrip
 
 
 $( "#keybutton" ).click(function() {
-
-txt = window.prompt("?");
-loadtxt();
-
-  
+   txt = window.prompt("?");
+   loadtxt();
 });
+
+
+
+// toggle full screen
+function toggleFullScreen() {
+  if (!document.fullscreenElement &&    // alternative standard method
+      !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    }
+  } else {
+    if (document.cancelFullScreen) {
+      document.cancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    }
+  }
+}
 
 </script>
 
