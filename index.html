@@ -169,7 +169,7 @@ left:0;
 
 int verts = 100;
 int radius = 40;
-int sf2 = ($(window).innerHeight()-250)/document.getElementById("size").value;
+int sf2 = ($(window).innerHeight()-230)/document.getElementById("size").value;
 int sfx = 1;
 int x = 0;
 int y = 0;
@@ -194,7 +194,27 @@ void draw(){
 
 translate(50,height-height*0.25);
 scale(sf2,sf2);
+
+
+stroke(0,100,0,100);
+strokeWeight(1/sf2);
+
+//ellipse(xmin,ymin,1,1);
+//ellipse(xmax,ymax,1,1);
+line(xmin-5,ymax,xmin-8,ymax);
+line(xmin-8,ymin,xmin-8,ymax);
+line(xmin-5,ymin,xmin-8,ymin);
+
+stroke(200,0,0,100);
+line(xmin,ymax+8,xmin,ymax+5);
+line(xmin,ymax+8,xmax,ymax+8);
+line(xmax,ymax+8,xmax,ymax+5);
+
+
+
 strokeWeight(1/sf2*2);
+
+
 
 for(i=0;i<dots.length;i++){
 
@@ -223,15 +243,11 @@ for(i=0;i<dots.length;i++){
          }
          else{
            vertex(dots[i][j][0],dots[i][j][1]);
-         }
-         
+         }         
       
    }
 
-
 endShape();
-
-
 
 }
 
@@ -247,26 +263,13 @@ for(i=0;i<offsetted_paths.length;i++){
       }
    endShape();
 
-sf2 = ($(window).innerHeight()-250)/document.getElementById("size").value;
+sf2 = ($(window).innerHeight()-230)/document.getElementById("size").value;
 
 }
 
 
 }
 
-
-void heart(){
-   beginShape();
-      for (float i = 0; i <= verts; i = i+1) {
-         float T = (TWO_PI/verts*i);
-         float sint = sin(TWO_PI/verts*i), cost = cos(TWO_PI/verts*i);
-         float r = (sin(T) * sqrt(abs(cos(T))))/(sin(T)+ 1.4) - 2*sin(T) + 2+0.001;
-         x = (radius*2.5)+r*cos(T)*(radius*sf);
-         y = -height + (radius*sf*4)+r*sin(T)*(radius*sf);
-         vertex(x,y);
-      }
-   endShape();
-}
 
 
 void keyPressed() {
@@ -288,7 +291,7 @@ loadtxt();
 
 void resizeSketch(){
    size($(window).innerWidth()-30,$(window).innerHeight()-180);
-   sf2 = ($(window).innerHeight()-180)/document.getElementById("size").value;
+   sf2 = ($(window).innerHeight()-230)/document.getElementById("size").value;
 
 
 }
@@ -392,6 +395,13 @@ var dots = [];
 var curve = "";
 var curve_length;
 var offsetted_paths = [];
+
+var x = [];
+var y = [];
+var xmin;
+var xmax;
+var ymin;
+var ymax;
 
 
 function reload(){
@@ -545,23 +555,9 @@ var low = [];
 
 xy = [];
 
-for(i=0;i<points.length;i++){
 
-xy.push([]);
-
-minx.push([]);
-miny.push([]);
-
-   for(j=0;j<points[i].length;j++){
-
-      xy[i].push([parseFloat(points[i][j].x.toFixed(5)),parseFloat(points[i][j].y.toFixed(5))]);
-      minx[i].push([points[i][j].x])
-      miny[i].push([points[i][j].y])
-   }
-
-}
-
-
+x = [];
+y = [];
 
 
 for(i=0;i<dots.length;i++){
@@ -570,26 +566,30 @@ points.push([]);
 
    for(j=0;j<dots[i].length;j++){
 
-points[i].push({X:dots[i][j][0],Y:dots[i][j][1]}); 
-
+      points[i].push({X:dots[i][j][0],Y:dots[i][j][1]}); 
+      x.push(dots[i][j][0]);
+      y.push(dots[i][j][1]);
    }
 
 }
 
+xmin = (Math.min.apply(Math, x));
+xmax = (Math.max.apply(Math, x));
+ymin = (Math.min.apply(Math, y));
+ymax = (Math.max.apply(Math, y));
+
 var tool_diameter=document.getElementById("tool").value;
 
 var scale = 100;
+
 ClipperLib.JS.ScaleUpPaths(points, scale);
 var co = new ClipperLib.ClipperOffset(2, 0.25);
 co.AddPaths(points, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
 offsetted_paths = new ClipperLib.Paths();
-
 co.Execute(offsetted_paths, (tool_diameter/2*25.4) * scale);
 
 for(i=0;i<offsetted_paths.length;i++){
-
-offsetted_paths[i].push(offsetted_paths[i][0]);
-
+   offsetted_paths[i].push(offsetted_paths[i][0]);
 }
 
 //console.log(offsetted_paths);
@@ -642,8 +642,6 @@ for(i=offsetted_paths.length-1;i>=0;i--){
       else{
          g += "g1x" + offsetted_paths[i][j].X/100 + "y" + (0-offsetted_paths[i][j].Y/100) + '\n';
       }
-
-
    }
 
    g +="g0z5\n";
