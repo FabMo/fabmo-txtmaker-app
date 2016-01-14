@@ -87,11 +87,6 @@ left:0;
         <label for="materail">MATERIAL TYPE</label>
         <select name="material" id="material">
           <option value="plywood" selected>PLYWOOD</option>
-          <option value="wax">WAX</option>
-          <option value="hdpe">HDPE</option>
-          <option value="foam">FOAM</option>
-          <option value="pcb">PCB</option>
-          <option value="aluminum">ALUMINUM</option>
         </select>
       </fieldset>
     </form>
@@ -101,8 +96,8 @@ left:0;
         <label for="material">MATERIAL THICKNESS</label>
         <select name="thickness" id="thickness">
           <option value="0.073">1/16"</option>
-          <option value="0.135" selected>1/8"</option>
-          <option value="0.26">1/4"</option>
+          <option value="0.135">1/8"</option>
+          <option value="0.26" selected>1/4"</option>
           <option value="0.51">1/2"</option>
         </select>
       </fieldset>
@@ -112,6 +107,8 @@ left:0;
       <fieldset class="ui-field-contain">
         <label for="day">CUTTING TOOL</label>
         <select name="tool" id="tool">
+          <option value="0.0313">1/32" ENDMILL</option>
+          <option value="0.0625">1/16" ENDMILL</option>
           <option value="0.125" selected>1/8" ENDMILL</option>
           <option value="0.25">1/4" ENDMILL</option>
         </select>
@@ -204,7 +201,7 @@ void setup(){
    frameRate(4);
    strokeCap(ROUND);
    strokeWeight(1);
-   textFont(createFont("Arial",4));
+   textFont(createFont("Arial",5));
    
 }
 
@@ -217,11 +214,10 @@ void draw(){
 
 
 translate(130,height-height*0.3);
+
 scale(sf2,sf2);
 
-
-
-stroke(0,100,0,100);
+stroke(0,100,0,150);
 strokeWeight(1/sf2);
 
 //ellipse(xmin,ymin,1,1);
@@ -236,11 +232,13 @@ line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
 fill(180,0,0,100);
-text(nf((xmax-xmin)/25.4,1,2) + " ", xmax/2-2, ymax+12);
+textSize(18/sf2);
+text(nf((xmax-xmin)/25.4,1,2) + " ", nf(xmax/2-3,1,0), nf(ymax+15,1,0));
+
 noFill();
 
 fill(0,100,0,100);
-text(nf((abs(ymin)+ymax)/25.4,1,2) + " ", xmin-16, ymin/2+2);
+text(nf((abs(ymin)+ymax)/25.4,1,2) + " ", nf(xmin-15,1,0), nf(ymin/2,1,0));
 noFill();
 
 strokeWeight(1/sf2*2);
@@ -295,6 +293,8 @@ for(i=0;i<offsetted_paths.length;i++){
    endShape();
 
 sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
+
+//console.log(sf2);
 
 }
 
@@ -592,10 +592,20 @@ xy_offset = [];
    len = [];
    svg = [];
 
+
+//console.log(document.getElementById("thickness").value);
+
+
 }
 
 
 function make(){
+
+var pass_no = (document.getElementById("thickness").value/tool_diameter).toFixed(0);
+var pass = 1;
+var pass_depth = document.getElementById("thickness").value/pass_no;
+
+//console.log("pass_no: " + pass_no);
 
 g="";
 
@@ -609,24 +619,33 @@ g+="g4p2";
 //console.log(offsetted_paths);
 for(i=offsetted_paths.length-1;i>=0;i--){   
 
-//   gcode.push([]);
+
+while(pass<=pass_no){
 
    for(j=0;j<offsetted_paths[i].length;j++){
 
-      if(j==0){
+      if((j==0) && (pass==1)){
          g +="g0z5\n";
          g += "g0x" + offsetted_paths[i][j].X/100 + "y" + (ymax-offsetted_paths[i][j].Y/100) + '\n';
-         g +="g1z-" + document.getElementById("thickness").value + "f500\n";
+         g +="g1z-" + pass_depth*25.4 + "f500\n";
          g +="g1f1500\n";         
 
       }
-      
+      else if((j==0) && (pass>1)){
+         g +="g1z-" + pass_depth*pass*25.4 + "f600\n";
+         g +="g1f1500\n"; 
+      }            
       else{
          g += "g1x" + offsetted_paths[i][j].X/100 + "y" + (ymax-offsetted_paths[i][j].Y/100) + '\n';
       }
    }
+pass++;
+}
+
+   pass=1;
 
    g +="g0z5\n";
+
 
 }
 
@@ -648,7 +667,6 @@ $( "#keybutton" ).click(function() {
    txt = window.prompt("?");
    loadtxt();
 });
-
 
 
 // toggle full screen
