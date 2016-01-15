@@ -84,9 +84,9 @@ left:0;
 
     <form method="post">
       <fieldset class="ui-field-contain">
-        <label for="materail">MATERIAL TYPE</label>
+        <label for="material">MATERIAL TYPE</label>
         <select name="material" id="material">
-          <option value="plywood" selected>PLYWOOD</option>
+          <option value="feed:1000,plunge:200" selected>PLYWOOD</option>
         </select>
       </fieldset>
     </form>
@@ -147,7 +147,7 @@ left:0;
 
 <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
 
-<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">KEYBOARD</a>
+<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">TEXT</a>
 
     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
 
@@ -387,6 +387,7 @@ function reload(){
    dots = [];
    svg = [];
    offsetted_paths = [];
+   var material;
    
    loadfont();
    loadtxt();
@@ -561,6 +562,14 @@ else{
 //console.log(ymax/25.4);
 //console.log(xmin/25.4);
 //console.log(xmax/25.4-xmin/25.4);
+//console.log(points);
+
+
+//var cleaned_paths = ClipperLib.JS.Clean (points, 0.1);
+
+//console.log(points);
+//console.log(simple_paths);
+//console.log(cleaned_paths);
 
 
 tool_diameter=document.getElementById("tool").value;
@@ -568,10 +577,15 @@ tool_diameter=document.getElementById("tool").value;
 var scale = 100;
 
 ClipperLib.JS.ScaleUpPaths(points, scale);
+
+var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero);
+
 var co = new ClipperLib.ClipperOffset(2, 0.25);
-co.AddPaths(points, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
+co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
 offsetted_paths = new ClipperLib.Paths();
 co.Execute(offsetted_paths, (tool_diameter/2*25.4) * scale);
+
+//console.log(co);
 
 for(i=0;i<offsetted_paths.length;i++){
    offsetted_paths[i].push(offsetted_paths[i][0]);
@@ -595,6 +609,9 @@ xy_offset = [];
 
 //console.log(document.getElementById("thickness").value);
 
+material = eval('({' + (document.getElementById("material").value) + '})');
+//console.log(material.feed);
+//console.log(material.plunge);
 
 }
 
@@ -616,7 +633,10 @@ g+="m4\n";
 g+="g4p2";
 
 
+//console.log(xmax);
 //console.log(offsetted_paths);
+
+
 for(i=offsetted_paths.length-1;i>=0;i--){   
 
 
@@ -624,21 +644,51 @@ while(pass<=pass_no){
 
    for(j=0;j<offsetted_paths[i].length;j++){
 
-      if((j==0) && (pass==1)){
-         g +="g0z5\n";
-         g += "g0x" + offsetted_paths[i][j].X/100 + "y" + (ymax-offsetted_paths[i][j].Y/100) + '\n';
-         g +="g1z-" + pass_depth*25.4 + "f500\n";
-         g +="g1f1500\n";         
+      if(xmax<=140){
 
+         if((j==0) && (pass==1)){
+            g +="g0z5\n";
+            g += "g0x" + (offsetted_paths[i][j].X/100).toFixed(3) + "y" + (ymax-offsetted_paths[i][j].Y/100).toFixed(3) + '\n';
+            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f500\n";
+            g +="g1f1500\n";         
+
+         }
+         else if((j==0) && (pass>1)){
+            g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n';
+            g +="g1f1500\n"; 
+         }            
+         else{
+            g += "g1x" + (offsetted_paths[i][j].X/100).toFixed(3) + "y" + (ymax-offsetted_paths[i][j].Y/100).toFixed(3) + '\n';
+         }
+      
       }
-      else if((j==0) && (pass>1)){
-         g +="g1z-" + pass_depth*pass*25.4 + "f600\n";
-         g +="g1f1500\n"; 
-      }            
-      else{
-         g += "g1x" + offsetted_paths[i][j].X/100 + "y" + (ymax-offsetted_paths[i][j].Y/100) + '\n';
-      }
+
+//rotate 90ccw
+
+      else if(xmax>140){
+
+          if((j==0) && (pass==1)){
+            g +="g0z5\n";
+            g += "g0x" + (Math.abs(ymin) + offsetted_paths[i][j].Y/100).toFixed(3) + "y" + (offsetted_paths[i][j].X/100).toFixed(3) + '\n';
+            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f500\n";
+            g +="g1f1500\n";         
+
+         }
+         else if((j==0) && (pass>1)){
+            g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n';
+            g +="g1f1500\n"; 
+         }            
+         else{
+            g += "g1x" + (Math.abs(ymin) + offsetted_paths[i][j].Y/100).toFixed(3) + "y" + (offsetted_paths[i][j].X/100).toFixed(3) + '\n';
+         }
+
    }
+
+
+
+   }
+
+
 pass++;
 }
 
@@ -646,12 +696,13 @@ pass++;
 
    g +="g0z5\n";
 
-
 }
 
 g+="m5\n";
 g+="m30\n";
 
+//todo
+//add tabs
 
 //console.log(offsetted_paths);
 //console.log(gcode);
