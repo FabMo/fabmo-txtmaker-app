@@ -761,7 +761,7 @@ xy_offset = [];
 material = eval('({' + (document.getElementById("material").value) + '})');
 
 //console.log(material.feed);
-//console.log(material.plunge);
+console.log(material.plunge);
 
 }
 
@@ -842,7 +842,7 @@ while(pass<=pass_no){
           if((j==0) && (pass==1)){
             g +="g0z5\n";
             g += "g0x" + (Math.abs(ymin) + offsetted_paths[i][j].Y/100).toFixed(3) + "y" + (offsetted_paths[i][j].X/100).toFixed(3) + '\n';
-            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plung + "\n";
+            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n";
             g +="g1f" + material.feed + "\n";         
 
          }
