@@ -660,7 +660,7 @@ for(i=0;i<delta.length;i++){
 if(Math.max.apply(Math, delta[i])>4){
 
 
-tabs.push({X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100))))});
+tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false});
 
 //length
 //console.log(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]);
@@ -718,7 +718,7 @@ tabs.push({X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, del
 else{
 
 //tabs.push({index: Math.round((delta[i].length/2))});
-tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-3].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-3].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+2].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+2].Y/100});
+tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-3].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-3].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+2].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+2].Y/100,line: Math.round(delta[i].length/2)-3, curve: true});
 
 
 }
@@ -780,7 +780,7 @@ g="";
 g+="g21\n";
 g+="g0z5\n";
 g+="m4\n";
-g+="g4p2";
+g+="g4p2\n";
 
 
 //console.log(xmax);
@@ -803,15 +803,37 @@ while(pass<=pass_no){
             g +="g1f" + material.feed + "\n";         
 
          }
+
          else if((j==0) && (pass>1)){
             g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n';
-            g +="g1f1500\n"; 
-         }            
+            g +="g1f" + material.feed + "\n";
+         }   
          else{
             g += "g1x" + (offsetted_paths[i][j].X/100).toFixed(3) + "y" + (ymax-offsetted_paths[i][j].Y/100).toFixed(3) + '\n';
          }
+
+
+
+         if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false)){
+
+           g += ("g1x" + tabs[i].X1.toFixed(3) + "y" + (ymax-tabs[i].Y1).toFixed(3) + "\n");
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
+           g += ("g1x" + tabs[i].X2.toFixed(3) + "y" + (ymax-tabs[i].Y2).toFixed(3) + "\n");
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
+           g +="g1f" + material.feed + "\n";
+         }
+
+         else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true)){
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
+         }
+         else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true)){
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
+           g +="g1f" + material.feed + "\n";
+         }     
+
       
-      }
+
+         }
 
 //rotate 90ccw
 
@@ -826,11 +848,29 @@ while(pass<=pass_no){
          }
          else if((j==0) && (pass>1)){
             g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n';
-            g +="g1f1500\n"; 
+            g +="g1f" + material.feed + "\n"; 
          }            
          else{
             g += "g1x" + (Math.abs(ymin) + offsetted_paths[i][j].Y/100).toFixed(3) + "y" + (offsetted_paths[i][j].X/100).toFixed(3) + '\n';
          }
+
+         if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false)){
+
+           g += ("g1x" + (Math.abs(ymin) + tabs[i].Y1).toFixed(3) + "y" + (tabs[i].X1).toFixed(3) + "\n");
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
+           g += ("g1x" + (Math.abs(ymin) + tabs[i].Y2).toFixed(3) + "y" + (tabs[i].X2).toFixed(3) + "\n");
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
+           g +="g1f" + material.feed + "\n";
+         }
+
+         else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true)){
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
+         }
+         else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true)){
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
+           g +="g1f" + material.feed + "\n";
+         }     
+
 
    }
 
