@@ -218,28 +218,42 @@ translate(130,height-height*0.3);
 
 scale(sf2,sf2);
 
-stroke(0,100,0,150);
+if(xmax<140){
+   stroke(0,100,0,150);
+   fill(0,100,0,150);
+}
+else{
+   stroke(200,0,0,150);
+   fill(200,0,0,150);
+}
 strokeWeight(1/sf2);
 
-//ellipse(xmin,ymin,1,1);
-//ellipse(xmax,ymax,1,1);
+
+text(nf((abs(ymin)+ymax)/25.4,1,2) + "\" ", nf(xmin-23,1,0), nf(ymin/2,1,0));
+
+
 line(xmin-5,ymax,xmin-8,ymax);
 line(xmin-8,ymin,xmin-8,ymax);
 line(xmin-5,ymin,xmin-8,ymin);
 
-stroke(200,0,0,150);
+if(xmax<140){
+   stroke(200,0,0,150);
+   fill(180,0,0,150);
+}
+else{
+   stroke(0,100,0,150);
+   fill(0,100,0,150);
+}
+
+
 line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
-fill(180,0,0,150);
+
 textSize(18/sf2);
 text(nf((xmax-xmin)/25.4,1,2) + "\" ", nf(xmax/2-4,1,0), nf(ymax+15,1,0));
 
-noFill();
-
-fill(0,100,0,150);
-text(nf((abs(ymin)+ymax)/25.4,1,2) + "\" ", nf(xmin-23,1,0), nf(ymin/2,1,0));
 noFill();
 
 strokeWeight(1/sf2*2);
@@ -332,8 +346,13 @@ ellipse(offsetted_paths[i][2].X/100,offsetted_paths[i][2].Y/100,3/sf2,3/sf2);
 */
 //      for(j=0;j<offsetted_paths[i].length;j++){
 stroke(255,150,0);
-ellipse(xmin,ymax,2/sf2,2/sf2);
-      
+if(xmax<140){
+   ellipse(xmin,ymax,2/sf2,2/sf2);
+}
+
+else{
+   ellipse(xmin,ymin,2/sf2,2/sf2);
+}      
 
 //      }  
 }
@@ -461,7 +480,7 @@ function loadtxt() {
 
 function onFontLoaded(font) {
 
-//var txt = document.getElementById("text").value;
+
 var path = font.getPath(txt, 0, 0, document.getElementById("size").value);
 
 
@@ -518,9 +537,6 @@ dots.push([]);
          test2 += test[i].commands[i2].y1 + " ";
          test2 += test[i].commands[i2].x + " "; 
          test2 += test[i].commands[i2].y + " ";
-
-//            dots.push([test[i].commands[i2].x1,test[i].commands[i2].y1]);
-//            dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y]);
          
          curve += "M ";
          curve += test[i].commands[i2-1].x + " ";
@@ -655,7 +671,7 @@ delta.push([]);
 
 for(i=0;i<delta.length;i++){
 
-
+//tabs
 
 if(Math.max.apply(Math, delta[i])>4){
 
@@ -891,9 +907,6 @@ pass++;
 g+="m5\n";
 g+="m30\n";
 
-//todo
-//add tabs
-
 //console.log(offsetted_paths);
 //console.log(gcode);
 //console.log(g);
@@ -911,8 +924,14 @@ $( "#keybutton" ).click(function() {
    tabs = [];
 
    txt = window.prompt("?");
-   loadtxt();
 
+   if(txt!=null){
+      loadtxt();
+   }
+   else{
+      txt = "?"
+   loadtxt();
+}
    
 
 });
