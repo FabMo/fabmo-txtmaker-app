@@ -345,18 +345,21 @@ stroke(0,200,0);
 ellipse(offsetted_paths[i][2].X/100,offsetted_paths[i][2].Y/100,3/sf2,3/sf2);
 */
 //      for(j=0;j<offsetted_paths[i].length;j++){
-stroke(255,150,0);
+ 
+}
+
+//0,0
+stroke(138,43,226);
+fill(135,206,250);
+strokeWeight(1/sf2);
 if(xmax<140){
-   ellipse(xmin,ymax,2/sf2,2/sf2);
+   ellipse(xmin,ymax,4/sf2,4/sf2);
 }
 
 else{
-   ellipse(xmin,ymin,2/sf2,2/sf2);
-}      
-
-//      }  
-}
-
+   ellipse(xmin,ymin,4/sf2,4/sf2);
+}  
+noFill();
 
 
 }
