@@ -35,10 +35,13 @@
   </div>
   <div data-role="footer" style="text-align:center;">
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-      <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-minus ui-btn-icon-left" onclick="scaleDown();">SIZE TXT</a>
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" onclick="scaleUp();">SIZE TXT</a>
+      <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TXT</a>
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
 </div> 
+
 
 <div data-role="page" id="pagezero">
   <div data-role="header">
@@ -70,10 +73,9 @@
       <fieldset class="ui-field-contain">
         <label for="size">FONT SIZE</label>
         <select name="size" id="size">
-<!--
-          <option value="12.6">1/2"</option>
-          <option value="25.4">1"</option>
--->
+
+          <option value="12">1/2"</option>
+          <option value="6">1"</option>
           <option value="3">2"</option>
           <option value="2">3"</option>
           <option value="1.5" selected>4"</option>
@@ -133,6 +135,7 @@
 int verts = 100;
 int radius = 40;
 int sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
+int sf = 1;
 int sfx = 1;
 int x = 0;
 int y = 0;
@@ -158,8 +161,18 @@ document.getElementById("2D").focus();
 size($(window).innerWidth()-30,$(window).innerHeight()-180);
 
 
-sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
-scale(sf2,sf2);
+
+
+if(xmax<(abs(ymax-ymin))){
+   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
+   scale(sf2,sf2);
+}
+
+else{
+   sf2 = abs($(window).innerWidth())/(abs(xmax-xmin)+80);
+   scale(sf2,sf2);
+}
+//ellipse(xmax+30,(ymax-ymin+5),2,2);
 
 translate((-(xmin)+30),abs(ymin)+5);
 
@@ -268,11 +281,11 @@ strokeWeight(4/sf2);
 stroke(0);
 
 
-strokeWeight(2/sf2);
+strokeWeight(3/sf2);
 
 stroke(200,0,0);//second tab point
 ellipse(ptabs[i].X1,ptabs[i].Y1,2/sf2,2/sf2);
-stroke(0);//first tab point
+stroke(0,100,0);//first tab point
 ellipse(ptabs[i].X2,ptabs[i].Y2,2/sf2,2/sf2);
 
  
@@ -533,7 +546,7 @@ ClipperLib.JS.ScaleUpPaths(points, scale)
 
 var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
 
-var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25)
+var co = new ClipperLib.ClipperOffset(((tool_diameter/2*25.4)*document.getElementById("size").value), 0.25)
 co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
 offsetted_paths = new ClipperLib.Paths()
 co.Execute(offsetted_paths, ((tool_diameter/2*25.4)*document.getElementById("size").value) * scale)
@@ -560,18 +573,20 @@ delta.push([])
 for(i=0;i<delta.length;i++){
 
 //tabs
+var tab_length = Math.round(tool_diameter*1.5*25.4);
+//*2
 
-if(Math.max.apply(Math, delta[i])>4){
+if(Math.max.apply(Math, delta[i])>(tab_length*2)){
 
 
-tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false})
+tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false})
 
 
 }
 else{
 
 
-tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-3].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-3].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+2].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+2].Y/100,line: Math.round(delta[i].length/2)-3, curve: true})
+tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-(tab_length)].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-(tab_length)].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+tab_length].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+tab_length].Y/100,line: Math.round(delta[i].length/2)-(tab_length), curve: true})
 
 
 }
