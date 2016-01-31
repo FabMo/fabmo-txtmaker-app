@@ -17,42 +17,42 @@
 
 
 </head>
-<style>
-
-#run{
-position: absolute;
-left: 0;
-top:0;
-}
-
-#3D{
-
-position: absolute;
-top:0;
-left:0;
-}
-
-</style>
-
 <body onload="reload();">
+
+<div data-role="page" id="pageone">
+  <div data-role="header">
+    <h1>PRESS A KEY</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();" class="ui-btn-active ui-state-persist">TXT MAKER</a></li>
+
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+    <canvas id="2D" tabindex="1"> </canvas>
+  </div>
+  <div data-role="footer" style="text-align:center;">
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+      <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
+  </div>
+</div> 
+
 <div data-role="page" id="pagezero">
   <div data-role="header">
     <h1>SELECT A FONT</h1>
     <div data-role="navbar">
       <ul>
         <li><a href="#pagezero" class="ui-btn-active ui-state-persist">SETUP</a></li>
-        <li><a href="#pageone" onclick="reload();">TEXT</a></li>
-<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
+        <li><a href="#pageone" onclick="reload();">TXT MAKER</a></li>
+
       </ul>
     </div>
   </div>
   <div data-role="main" class="ui-content">
-<!--
-<textarea id="keyboard" placeholder="Enter Text..."></textarea>
 
-      <label for="text">TEXT:</label>
-      <input type="text" name="text" id="text" value="Hello!">
--->
     <form method="post">
       <fieldset class="ui-field-contain">
         <label for="font">FONT</label>
@@ -74,11 +74,11 @@ left:0;
           <option value="12.6">1/2"</option>
           <option value="25.4">1"</option>
 -->
-          <option value="50.8">2"</option>
-          <option value="76.2">3"</option>
-          <option value="101.6" selected>4"</option>
-          <option value="127">5"</option>
-          <option value="152.4">6"</option> 
+          <option value="3">2"</option>
+          <option value="2">3"</option>
+          <option value="1.5" selected>4"</option>
+          <option value="1.2">5"</option>
+          <option value="1">6"</option> 
 
 
         </select>
@@ -120,64 +120,9 @@ left:0;
 </div>
   <div data-role="footer" style="text-align:center;">
     <a href="#pagezero" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-
     <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
   </div>
 </div> 
-
-<div data-role="page" id="pageone">
-  <div data-role="header">
-    <h1>PRESS A KEY</h1>
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#pagezero">SETUP</a></li>
-        <li><a href="#pageone" onclick="reload();" class="ui-btn-active ui-state-persist">TEXT</a></li>
-<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
-      </ul>
-    </div>
-  </div>
-  <div data-role="main" class="ui-content">
-    <canvas id="2D" tabindex="1"> </canvas>
-   <!--
-    <textarea id="keyboard" placeholder="Enter Text..."style="display: none;" ></textarea>
-   -->
-  </div>
-  <div data-role="footer" style="text-align:center;">
-<!--
-    <textarea id="keyboard" placeholder="Enter Text..." style="display: none; visibility: hidden;" ></textarea>
--->
-
-<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-
-<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">TEXT</a>
-
-    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
-
-  </div>
-</div> 
-
-<!--
-
-<div data-role="page" id="pagetwo">
-  <div data-role="header">
-    <h1>SUBMIT JOB</h1>
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#pagezero">SETUP</a></li>
-        <li><a href="#pageone" onclick="reload();">TEXT</a></li>
-        <li><a href="#pagetwo" class="ui-btn-active ui-state-persist">PREVIEW</a></li>
-      </ul>
-    </div>
-  </div>
-  <div data-role="main" class="ui-content">
-   <canvas id="3D">  </canvas>
-     </div>
-      <div data-role="footer" style="text-align:center;">
-    <a href="#pagetwo" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-left" onclick="make();">SUBMIT JOB</a>
-  </div>
-</div> 
--->
-
 
 
 
@@ -185,12 +130,9 @@ left:0;
 <script type="application/processing" data-processing-target="2D">
 
 
-
-//font = loadFont("FFScala.ttf"); 
-
 int verts = 100;
 int radius = 40;
-int sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
+int sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
 int sfx = 1;
 int x = 0;
 int y = 0;
@@ -203,9 +145,7 @@ void setup(){
    frameRate(2);
    strokeCap(ROUND);
    strokeWeight(1);
-   textFont(createFont("Arial",5));
-
-   
+   textFont(createFont("Arial",6));
 }
 
 void draw(){
@@ -214,11 +154,14 @@ background(235);
 
 document.getElementById("2D").focus();
 
-sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
 
-translate(130,height-height*0.3);
+size($(window).innerWidth()-30,$(window).innerHeight()-180);
 
+
+sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
 scale(sf2,sf2);
+
+translate((-(xmin)+30),abs(ymin)+5);
 
 if(xmax<140){
    stroke(0,100,0,150);
@@ -230,8 +173,8 @@ else{
 }
 strokeWeight(1/sf2);
 
-textSize(18/sf2);
-text(nf((abs(ymin)+ymax)/25.4,1,2) + "\" ", nf(xmin-23,1,0), nf(ymin/2,1,0));
+
+text(nf((abs(ymin)+ymax)/document.getElementById("size").value/25.4,1,2) + "\"", nf(xmin-25,1,0), nf(ymin/2,1,0));
 
 
 line(xmin-5,ymax,xmin-8,ymax);
@@ -252,7 +195,7 @@ line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
-text(nf((xmax-xmin)/25.4,1,2) + "\" ", nf(xmax/2-4,1,0), nf(ymax+15,1,0));
+text(nf((xmax-xmin)/document.getElementById("size").value/25.4,1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+15,1,0));
 
 noFill();
 
@@ -324,12 +267,6 @@ strokeWeight(4/sf2);
 
 stroke(0);
 
-/*
-beginShape();
-vertex(tabs[i].X1,tabs[i].Y1);
-vertex(tabs[i].X2,tabs[i].Y2);
-endShape();
-*/
 
 strokeWeight(2/sf2);
 
@@ -338,22 +275,15 @@ ellipse(ptabs[i].X1,ptabs[i].Y1,2/sf2,2/sf2);
 stroke(0);//first tab point
 ellipse(ptabs[i].X2,ptabs[i].Y2,2/sf2,2/sf2);
 
-/*
-stroke(0);
-ellipse(offsetted_paths[i][0].X/100,offsetted_paths[i][0].Y/100,3/sf2,3/sf2);
-stroke(0,200,0);
-ellipse(offsetted_paths[i][2].X/100,offsetted_paths[i][2].Y/100,3/sf2,3/sf2);
-*/
-//      for(j=0;j<offsetted_paths[i].length;j++){
  
 }
 
 //0,0
 stroke(138,43,226);
-fill(135,206,250);
+fill(255,255,0);
 strokeWeight(1/sf2);
 if(xmax<140){
-   ellipse(xmin,ymax,4/sf2,4/sf2);
+   ellipse(xmin,ymax,5/sf2,5/sf2);
 }
 
 else{
@@ -363,7 +293,6 @@ noFill();
 
 
 }
-
 
 
 void keyPressed() {
@@ -379,90 +308,73 @@ loadtxt();
 }
 
 
-void resizeSketch(){
-
-   sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
-   size($(window).innerWidth()-30,$(window).innerHeight()-180);
-
-
-}
-
-$(window).resize(function() {	
-   resizeSketch();
-});
-
 
 </script>
 
 <script>
 
-var g = "";
-var gcode = [];                      
-var paths = [];
-var shapes = [];
-var fontFileName;
-var points = [];
-var count = [];
-var svg = [];
-var test = [];
-var test2 = [];
-var len = [];
-var points = [];
-var txt = "?";
-var xy = [];
-var xy_offset = [];
+var g = ""
+var gcode = []                     
+var paths = []
+var shapes = []
+var fontFileName
+var points = []
+var count = []
+var svg = []
+var test = []
+var test2 = []
+var len = []
+var points = []
+var txt = "?"
+var xy = []
+var xy_offset = []
 //var keyz;
-var oset = [[0,1]];
-var dots = [];
-var tool_diameter;
+var oset = [[0,1]]
+var dots = []
+var tool_diameter
 
-var curve = "";
-var curve_length;
-var offsetted_paths = [];
+var curve = ""
+var curve_length
+var offsetted_paths = []
 
-var x = [];
-var y = [];
-var xmin;
-var xmax;
-var ymin;
-var ymax;
-var material;
-var delta = [];
-var tabs = [];
-var ptabs = [];
-
-
+var x = []
+var y = []
+var xmin
+var xmax
+var ymin
+var ymax
+var material
+var delta = []
+var tabs = []
+var ptabs = []
 
 function reload(){
 
-//   var txt = document.getElementById("text").value;
-//alert(document.getElementById("font").value);   
-
-   points = [];
-   count = [];
-   shapes = [];
-   test = [];
-   test2 = [];
-   points = [];
-   path = "";
-   paths = [];
-   xy = [];
-   xy_offset = [];
-   dots = [];
-   svg = [];
-   offsetted_paths = [];
-   delta = [];
-   tabs=[];
-   delta=[];
-   
-   loadfont();
-   loadtxt();
+   points = []
+   count = []
+   shapes = []
+   test = []
+   test2 = []
+   points = []
+   path = ""
+   paths = []
+   xy = []
+   xy_offset = []
+   dots = []
+   svg = []
+   offsetted_paths = []
+   delta = []
+   tabs=[]
+   delta=[] 
+   loadfont()
+   loadtxt()
 
 }
 
 function loadfont() {
-   fontFileName = 'fonts/' + document.getElementById("font").value;
-//   txt = txt;
+
+   fontFileName = 'fonts/' + document.getElementById("font").value
+
 }
 
 
@@ -472,10 +384,10 @@ function loadtxt() {
    {
 
    if (err) {
-   alert('Font could not be loaded: ' + err);
+   alert('Font could not be loaded: ' + err)
    } 
       else {
-      onFontLoaded(font);
+      onFontLoaded(font)
       }
 });
 
@@ -484,188 +396,161 @@ function loadtxt() {
 function onFontLoaded(font) {
 
 
-var path = font.getPath(txt, 0, 0, document.getElementById("size").value);
+//var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
+var path = font.getPath(txt, 0, 0, 152.4)
 
 
 for(i=0;i<path.commands.length;i++){
    if(path.commands[i].type=="M"){
-   count.push(i);
+   count.push(i)
    }
 }
 
 for(i=0;i<count.length;i++){
 
    if(i==0){
-      paths.push([path.commands.slice(0,count[i+1])]);
+      paths.push([path.commands.slice(0,count[i+1])])
    }
    else if(i==count.length-1){
-      paths.push([path.commands.slice(count[i])]);
+      paths.push([path.commands.slice(count[i])])
    }
    else{
-      paths.push([path.commands.slice(count[i],count[i+1])]);
+      paths.push([path.commands.slice(count[i],count[i+1])])
    }
 
 }
 
 for(i=0;i<paths.length;i++){
-   shapes.push(paths[i]);
+   shapes.push(paths[i])
 }
 
 for(i=0;i<shapes.length;i++){
-test.push({commands: shapes[i][0], fill: "black", stroke: null, strokeWidth: 1});
+test.push({commands: shapes[i][0], fill: "black", stroke: null, strokeWidth: 1})
 }
 
-test2 = [];
-dots = [];
-var lines;
+test2 = []
+dots = []
 
 
 for(i=0;i<test.length;i++){
 
-dots.push([]);
+dots.push([])
 
     for(i2=0;i2<test[i].commands.length;i2++){
   
-      test2 += test[i].commands[i2].type + " ";
+      test2 += test[i].commands[i2].type + " "
    
        if((test[i].commands[i2].type=="L") || (test[i].commands[i2].type=="M")){
-          test2 += test[i].commands[i2].x + " ";
-          test2 += test[i].commands[i2].y + " ";
-          dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y]);
+          test2 += test[i].commands[i2].x + " "
+          test2 += test[i].commands[i2].y + " "
+          dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y])
                 
        }  
 
       if(test[i].commands[i2].type=="Q"){
-         test2 += test[i].commands[i2].x1 + " "; 
-         test2 += test[i].commands[i2].y1 + " ";
-         test2 += test[i].commands[i2].x + " "; 
-         test2 += test[i].commands[i2].y + " ";
+         test2 += test[i].commands[i2].x1 + " " 
+         test2 += test[i].commands[i2].y1 + " "
+         test2 += test[i].commands[i2].x + " " 
+         test2 += test[i].commands[i2].y + " "
          
-         curve += "M ";
-         curve += test[i].commands[i2-1].x + " ";
-         curve += test[i].commands[i2-1].y + " ";
+         curve += "M "
+         curve += test[i].commands[i2-1].x + " "
+         curve += test[i].commands[i2-1].y + " "
 
-         curve += test[i].commands[i2].type + " ";
-         curve += test[i].commands[i2].x1 + " "; 
-         curve += test[i].commands[i2].y1 + " ";
-         curve += test[i].commands[i2].x + " "; 
-         curve += test[i].commands[i2].y + " ";
+         curve += test[i].commands[i2].type + " "
+         curve += test[i].commands[i2].x1 + " "
+         curve += test[i].commands[i2].y1 + " "
+         curve += test[i].commands[i2].x + " " 
+         curve += test[i].commands[i2].y + " "
 
-//         console.log(curve);
-         curve_length = parseFloat(Snap.path.getTotalLength(curve).toFixed(0));
-//         console.log(curve_length);
+         curve_length = parseFloat(Snap.path.getTotalLength(curve).toFixed(0))
+
 
 if(curve_length>1){
          
          for(j=1;j<curve_length;j=j+1){
-            dots[i].push([Snap.path.getPointAtLength(curve, j).x,Snap.path.getPointAtLength(curve, j).y]);
-//            console.log(dots);
+            dots[i].push([Snap.path.getPointAtLength(curve, j).x,Snap.path.getPointAtLength(curve, j).y])
          }
 
 }
 
-            dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y]);
+            dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y])
 
-         curve = "";
-         curve_length = 0;                 
+         curve = ""
+         curve_length = 0                 
       } 
    }
-svg.push(test2);
+svg.push(test2)
 
-test2 = "";
+test2 = ""
 }
 
 
-var area = [];
-var sum = 0;
-var minx = [];
-var miny = [];
-var low = [];
+var area = []
+var minx = []
+var miny = []
+var low = []
 
-
-xy = [];
-
-
-x = [];
-y = [];
+xy = []
+x = []
+y = []
 
 
 for(i=0;i<dots.length;i++){
 
-points.push([]);
+points.push([])
 
    for(j=0;j<dots[i].length;j++){
-
-      points[i].push({X:dots[i][j][0],Y:dots[i][j][1]}); 
-      x.push(dots[i][j][0]);
-      y.push(dots[i][j][1]);
-
+      points[i].push({X:dots[i][j][0],Y:dots[i][j][1]}) 
+      x.push(dots[i][j][0])
+      y.push(dots[i][j][1])
    }
 
 }
 
-//console.log(dots);
 
 if(dots.length<1){
-   xmin = 0;
-   xmax = 0;
-   ymin = 0;
-   ymax = 0;
+   xmin = 0
+   xmax = 0
+   ymin = 0
+   ymax = 0
 }
 else{
-   xmin = (Math.min.apply(Math, x));
-   xmax = (Math.max.apply(Math, x));
-   ymin = (Math.min.apply(Math, y));
-   ymax = (Math.max.apply(Math, y));
+   xmin = (Math.min.apply(Math, x))
+   xmax = (Math.max.apply(Math, x))
+   ymin = (Math.min.apply(Math, y))
+   ymax = (Math.max.apply(Math, y))
 }
 
 
 
 
-//console.log(ymin/25.4);
-//console.log(ymax/25.4);
-//console.log(xmin/25.4);
-//console.log(xmax/25.4-xmin/25.4);
-//console.log(points);
+tool_diameter=document.getElementById("tool").value
 
+var scale = 100
 
-//var cleaned_paths = ClipperLib.JS.Clean (points, 0.1);
+ClipperLib.JS.ScaleUpPaths(points, scale)
 
-//console.log(points);
-//console.log(simple_paths);
-//console.log(cleaned_paths);
+var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
 
-
-tool_diameter=document.getElementById("tool").value;
-
-var scale = 100;
-
-ClipperLib.JS.ScaleUpPaths(points, scale);
-
-var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero);
-
-var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25);
-co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon);
-offsetted_paths = new ClipperLib.Paths();
-co.Execute(offsetted_paths, (tool_diameter/2*25.4) * scale);
-
-//console.log(co);
+var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25)
+co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
+offsetted_paths = new ClipperLib.Paths()
+co.Execute(offsetted_paths, ((tool_diameter/2*25.4)*document.getElementById("size").value) * scale)
 
 for(i=0;i<offsetted_paths.length;i++){
 
-   offsetted_paths[i].push(offsetted_paths[i][0]);
+   offsetted_paths[i].push(offsetted_paths[i][0])
 }
 
 
-
-
 for(i=0;i<offsetted_paths.length;i++){
 
-delta.push([]);
+delta.push([])
 
    for(j=0;j<offsetted_paths[i].length-1;j++){
 
-   delta[i].push((Math.sqrt(Math.pow(offsetted_paths[i][j].X-offsetted_paths[i][j+1].X,2)+Math.pow(offsetted_paths[i][j].Y-offsetted_paths[i][j+1].Y,2)))/100);
+   delta[i].push((Math.sqrt(Math.pow(offsetted_paths[i][j].X-offsetted_paths[i][j+1].X,2)+Math.pow(offsetted_paths[i][j].Y-offsetted_paths[i][j+1].Y,2)))/100)
 
    }
 
@@ -679,65 +564,14 @@ for(i=0;i<delta.length;i++){
 if(Math.max.apply(Math, delta[i])>4){
 
 
-tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false});
-
-//length
-//console.log(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]);
-
-//X1
-//console.log(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100);
-//X2
-//console.log(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100);
-//Y1
-//console.log(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100);
-//Y2
-//console.log(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100);
-
-//MidpointX
-//console.log(((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100);
-//MidpointY
-//console.log(((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100);
-
-
-
-//Distance from X1,Y1 to Midpoint
-//console.log(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2);
-
-//C = B - k(A - B)
-//k
-//console.log(2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2));
-
-//k*X1-Midx
-//console.log((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)));
-
-//k*Y1-Midy
-//console.log((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)));
-
-//Midx - k*X1-MidX
-//console.log((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100))));
-
-//Midy - k*Y1-MidY
-//console.log((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100))));
-
-
-//k*X2-MidX
-//console.log((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)));
-
-//k*Y2-MidY
-//console.log((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)));
-
-//MidX - k*X2-Midx
-//console.log((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100))));
-
-//MidY - k*Y2-Midy
-//console.log((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100))));
+tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((2/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false})
 
 
 }
 else{
 
-//tabs.push({index: Math.round((delta[i].length/2))});
-tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-3].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-3].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+2].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+2].Y/100,line: Math.round(delta[i].length/2)-3, curve: true});
+
+tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-3].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-3].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+2].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+2].Y/100,line: Math.round(delta[i].length/2)-3, curve: true})
 
 
 }
@@ -752,59 +586,45 @@ tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-3].X/100, Y1: of
 }
 
 
-console.log(tabs);
+//console.log(tabs)
+ptabs = tabs
 
-ptabs = tabs;
-//console.log(delta);
-//console.log(offsetted_paths);
+xy_offset = []
 
-
-
-
-xy_offset = [];
-
-   points = [];
-   count = [];
-   shapes = [];
-   test = [];
-   test2 = [];
-   path = " ";
-   paths = [];
-   shape = [];
-   len = [];
-   svg = [];
+   points = []
+   count = []
+   shapes = []
+   test = []
+   test2 = []
+   path = " "
+   paths = []
+   shape = []
+   len = []
+   svg = []
 
 
-//console.log(document.getElementById("thickness").value);
 
-material = eval('({' + (document.getElementById("material").value) + '})');
 
-//console.log(material.feed);
-console.log(material.plunge);
+material = eval('({' + (document.getElementById("material").value) + '})')
+
+console.log(material.plunge)
 
 }
 
 
 function make(){
 
-var pass_no = (document.getElementById("thickness").value/tool_diameter).toFixed(0);
-var pass = 1;
-var pass_depth = document.getElementById("thickness").value/pass_no;
+var pass_no = (document.getElementById("thickness").value/tool_diameter).toFixed(0)
+var pass = 1
+var pass_depth = document.getElementById("thickness").value/pass_no
 
-//console.log("pass_no: " + pass_no);
-
-g="";
+g=""
 
 //header
-g+="g21\n";
-g+="g0z5\n";
-g+="m4\n";
-g+="g4p2\n";
-
-
-//console.log(xmax);
-//console.log(offsetted_paths);
-
+g+="g21\n"
+g+="g0z5\n"
+g+="m4\n"
+g+="g4p2\n"
 
 for(i=offsetted_paths.length-1;i>=0;i--){   
 
@@ -816,38 +636,38 @@ while(pass<=pass_no){
       if(xmax<=140){
 
          if((j==0) && (pass==1)){
-            g +="g0z5\n";
-            g += "g0x" + (offsetted_paths[i][j].X/100).toFixed(3) + "y" + (ymax-offsetted_paths[i][j].Y/100).toFixed(3) + '\n';
-            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n";
-            g +="g1f" + material.feed + "\n";         
+            g +="g0z5\n"
+            g += "g0x" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + '\n'
+            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n"
+            g +="g1f" + material.feed + "\n"         
 
          }
 
          else if((j==0) && (pass>1)){
-            g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n';
-            g +="g1f" + material.feed + "\n";
+            g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n'
+            g +="g1f" + material.feed + "\n"
          }   
          else{
-            g += "g1x" + (offsetted_paths[i][j].X/100).toFixed(3) + "y" + (ymax-offsetted_paths[i][j].Y/100).toFixed(3) + '\n';
+            g += "g1x" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + '\n'
          }
 
 
 
          if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false)){
 
-           g += ("g1x" + tabs[i].X1.toFixed(3) + "y" + (ymax-tabs[i].Y1).toFixed(3) + "\n");
-           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
-           g += ("g1x" + tabs[i].X2.toFixed(3) + "y" + (ymax-tabs[i].Y2).toFixed(3) + "\n");
-           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
-           g +="g1f" + material.feed + "\n";
+           g += ("g1x" + (tabs[i].X1.toFixed(3)/document.getElementById("size").value) + "y" + ((ymax-tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
+           g += ("g1x" + (tabs[i].X2/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-tabs[i].Y2)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
+           g +="g1f" + material.feed + "\n"
          }
 
          else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true)){
-           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
          }
          else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true)){
-           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
-           g +="g1f" + material.feed + "\n";
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
+           g +="g1f" + material.feed + "\n"
          }     
 
       
@@ -859,62 +679,55 @@ while(pass<=pass_no){
       else if(xmax>140){
 
           if((j==0) && (pass==1)){
-            g +="g0z5\n";
-            g += "g0x" + (Math.abs(ymin) + offsetted_paths[i][j].Y/100).toFixed(3) + "y" + (offsetted_paths[i][j].X/100).toFixed(3) + '\n';
-            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n";
-            g +="g1f" + material.feed + "\n";         
+            g +="g0z5\n"
+            g += "g0x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + '\n'
+            g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n"
+            g +="g1f" + material.feed + "\n"
 
          }
          else if((j==0) && (pass>1)){
-            g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n';
-            g +="g1f" + material.feed + "\n"; 
+            g +="g1z-" + (pass_depth*pass*25.4).toFixed(3) + "f" + material.plunge + '\n'
+            g +="g1f" + material.feed + "\n"
          }            
          else{
-            g += "g1x" + (Math.abs(ymin) + offsetted_paths[i][j].Y/100).toFixed(3) + "y" + (offsetted_paths[i][j].X/100).toFixed(3) + '\n';
+            g += "g1x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + '\n'
          }
 
          if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false)){
 
-           g += ("g1x" + (Math.abs(ymin) + tabs[i].Y1).toFixed(3) + "y" + (tabs[i].X1).toFixed(3) + "\n");
-           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
-           g += ("g1x" + (Math.abs(ymin) + tabs[i].Y2).toFixed(3) + "y" + (tabs[i].X2).toFixed(3) + "\n");
-           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
-           g +="g1f" + material.feed + "\n";
+           g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "y" + ((tabs[i].X1)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
+           g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y2)/document.getElementById("size").value).toFixed(3) + "y" + ((tabs[i].X2)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
+           g +="g1f" + material.feed + "\n"
          }
 
          else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true)){
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
          }
          else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true)){
-           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n");
-           g +="g1f" + material.feed + "\n";
+           g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
+           g +="g1f" + material.feed + "\n"
          }     
-
-
+   }
    }
 
-
-
-   }
-
-
-pass++;
-}
-
-   pass=1;
-
-   g +="g0z5\n";
+pass++
 
 }
 
-g+="m5\n";
-g+="m30\n";
+   pass=1
 
-//console.log(offsetted_paths);
-//console.log(gcode);
+   g +="g0z5\n"
+
+}
+
+g+="m5\n"
+g+="m30\n"
+
 //console.log(g);
 
-fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value});
+fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value})
 
 }
 
@@ -922,18 +735,16 @@ fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, descrip
 
 $( "#keybutton" ).click(function() {
 
-
-   delta = [];
-   tabs = [];
-
-   txt = window.prompt("?");
+   delta = []
+   tabs = []
+   txt = window.prompt("?")
 
    if(txt!=null){
-      loadtxt();
+      loadtxt()
    }
    else{
       txt = "?"
-   loadtxt();
+   loadtxt()
 }
    
 
@@ -945,19 +756,19 @@ function toggleFullScreen() {
   if (!document.fullscreenElement &&    // alternative standard method
       !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
     if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen();
+      document.documentElement.requestFullscreen()
     } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen();
+      document.documentElement.mozRequestFullScreen()
     } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
     }
   } else {
     if (document.cancelFullScreen) {
-      document.cancelFullScreen();
+      document.cancelFullScreen()
     } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
+      document.mozCancelFullScreen()
     } else if (document.webkitCancelFullScreen) {
-      document.webkitCancelFullScreen();
+      document.webkitCancelFullScreen()
     }
   }
 }
