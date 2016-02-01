@@ -137,7 +137,7 @@
 </div>
   <div data-role="footer" style="text-align:center;">
 
-    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">MAKE TEXT</a>
+    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">MAKE TXT</a>
   </div>
 </div> 
 
@@ -292,7 +292,7 @@ strokeWeight(3/sf2);
 for(i=0;i<offsetted_paths.length;i++){
 
 
-   if(ptabs[i].tab==true){
+   if((ptabs[i].tab==true) && (document.getElementById("tabswitch").checked==true)){
       stroke(200,0,0);//second tab point
       ellipse(ptabs[i].X1,ptabs[i].Y1,2/sf2,2/sf2);
       stroke(0,100,0);//first tab point
@@ -560,7 +560,13 @@ var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFi
 var co = new ClipperLib.ClipperOffset(((tool_diameter/2*25.4)*document.getElementById("size").value), 0.25)
 co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
 offsetted_paths = new ClipperLib.Paths()
-co.Execute(offsetted_paths, ((tool_diameter/2*25.4)*document.getElementById("size").value) * scale)
+
+if(document.getElementById("cutonswitch").checked==true){
+   co.Execute(offsetted_paths, 0)
+}
+else{
+   co.Execute(offsetted_paths, ((tool_diameter/2*25.4)*document.getElementById("size").value) * scale)
+}
 
 for(i=0;i<offsetted_paths.length;i++){
 
@@ -673,7 +679,7 @@ while(pass<=pass_no){
             g += "g1x" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + '\n'
          }
 
-
+         if(document.getElementById("tabswitch").checked==true){
 
          if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false) && (tabs[i].tab==true)){
 
@@ -692,7 +698,7 @@ while(pass<=pass_no){
            g +="g1f" + material.feed + "\n"
          }     
 
-      
+         }      
 
          }
 
@@ -715,6 +721,8 @@ while(pass<=pass_no){
             g += "g1x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + '\n'
          }
 
+         if(document.getElementById("tabswitch").checked==true){
+
          if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false) && (tabs[i].tab==true)){
 
            g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "y" + ((tabs[i].X1)/document.getElementById("size").value).toFixed(3) + "\n")
@@ -730,7 +738,10 @@ while(pass<=pass_no){
          else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true) && (tabs[i].tab==true)){
            g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
            g +="g1f" + material.feed + "\n"
-         }     
+         } 
+
+         }
+    
    }
    }
 
