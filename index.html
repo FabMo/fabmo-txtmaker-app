@@ -638,7 +638,7 @@ xy_offset = []
 
 material = eval('({' + (document.getElementById("material").value) + '})')
 
-console.log(material.plunge)
+//console.log(material.plunge)
 
 }
 
@@ -647,6 +647,11 @@ function make(){
 
 var pass_no = (document.getElementById("thickness").value/tool_diameter).toFixed(0)
 var pass = 1
+
+if(pass_no==0){
+   pass_no=1
+}
+
 var pass_depth = document.getElementById("thickness").value/pass_no
 
 if(document.getElementById("multipassswitch").checked==false){
