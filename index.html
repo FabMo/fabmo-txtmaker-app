@@ -132,7 +132,10 @@
 
 
    INSERT TABS:
-   <input type="checkbox" data-role="flipswitch" name="tabswitch" id="tabswitch">
+   <input type="checkbox" data-role="flipswitch" name="tabswitch" id="tabswitch" checked>
+
+   MULTI-PASS:
+   <input type="checkbox" data-role="flipswitch" name="multipassswitch" id="multipassswitch" checked>
 
 </div>
   <div data-role="footer" style="text-align:center;">
@@ -645,6 +648,10 @@ function make(){
 var pass_no = (document.getElementById("thickness").value/tool_diameter).toFixed(0)
 var pass = 1
 var pass_depth = document.getElementById("thickness").value/pass_no
+
+if(document.getElementById("multipassswitch").checked==false){
+   pass_no=1
+}
 
 g=""
 
