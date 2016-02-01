@@ -21,7 +21,10 @@
 
 <div data-role="page" id="pageone">
   <div data-role="header">
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left" onclick="info();">JOB INFO</a> 
     <h1>PRESS A KEY</h1>
+
     <div data-role="navbar">
       <ul>
         <li><a href="#pagezero">SETUP</a></li>
@@ -34,9 +37,10 @@
     <canvas id="2D" tabindex="1"> </canvas>
   </div>
   <div data-role="footer" style="text-align:center;">
-      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+<!--
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-minus ui-btn-icon-left" onclick="scaleDown();">SIZE TXT</a>
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" onclick="scaleUp();">SIZE TXT</a>
+-->
       <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TXT</a>
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
@@ -45,7 +49,9 @@
 
 <div data-role="page" id="pagezero">
   <div data-role="header">
+    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
     <h1>SELECT A FONT</h1>
+
     <div data-role="navbar">
       <ul>
         <li><a href="#pagezero" class="ui-btn-active ui-state-persist">SETUP</a></li>
@@ -119,10 +125,19 @@
         </select>
       </fieldset>
     </form>
+
+   CUT ON LINE:
+   <input type="checkbox" data-role="flipswitch" name="cutonswitch" id="cutonswitch">
+
+
+
+   INSERT TABS:
+   <input type="checkbox" data-role="flipswitch" name="tabswitch" id="tabswitch">
+
 </div>
   <div data-role="footer" style="text-align:center;">
-    <a href="#pagezero" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
+
+    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">MAKE TEXT</a>
   </div>
 </div> 
 
@@ -164,10 +179,13 @@ size($(window).innerWidth()-30,$(window).innerHeight()-180);
 if((xmax*sf2)>($(window).innerWidth())){
    sf = abs($(window).innerWidth())/(abs(xmax-xmin)+80);
    scale(sf,sf);
+   textSize(12/sf);
+
 }
 else{
    sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
    scale(sf2,sf2);
+
 }
 
 
@@ -186,7 +204,7 @@ else{
 strokeWeight(1/sf2);
 
 
-text(nf((abs(ymin)+ymax)/document.getElementById("size").value/25.4,1,2) + "\"", nf(xmin-25,1,0), nf(ymin/2,1,0));
+text(nf((abs(ymin)+ymax+s)/document.getElementById("size").value/25.4,1,2) + "\"", nf(xmin-25,1,0), nf(ymin/2,1,0));
 
 
 line(xmin-5,ymax,xmin-8,ymax);
@@ -207,7 +225,7 @@ line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
-text(nf((xmax-xmin)/document.getElementById("size").value/25.4,1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+15,1,0));
+text(nf((xmax-xmin+s)/document.getElementById("size").value/25.4,1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+15,1,0));
 
 noFill();
 
@@ -337,6 +355,7 @@ var xy_offset = []
 var oset = [[0,1]]
 var dots = []
 var tool_diameter
+var s = 0
 
 var curve = ""
 var curve_length
@@ -748,10 +767,24 @@ $( "#keybutton" ).click(function() {
    else{
       txt = "?"
       loadtxt()
-}
-   
-
+   }   
 });
+
+function info(){
+
+   alert("text: " + txt + "\nfont: " + document.getElementById("font").value + "\ntabs: " + document.getElementById("tabswitch").checked + "\ncut on line: " + document.getElementById("cutonswitch").checked)
+
+}
+
+function scaleUp(){
+   s += 2.54
+   console.log(s)
+}
+
+function scaleDown(){
+   s -= 2.54
+   console.log(s)
+}
 
 
 // toggle full screen
