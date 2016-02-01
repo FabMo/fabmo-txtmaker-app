@@ -161,17 +161,16 @@ document.getElementById("2D").focus();
 size($(window).innerWidth()-30,$(window).innerHeight()-180);
 
 
-
-
-if(xmax<(abs(ymax-ymin))){
+if((xmax*sf2)>($(window).innerWidth())){
+   sf = abs($(window).innerWidth())/(abs(xmax-xmin)+80);
+   scale(sf,sf);
+}
+else{
    sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
    scale(sf2,sf2);
 }
 
-else{
-   sf2 = abs($(window).innerWidth())/(abs(xmax-xmin)+80);
-   scale(sf2,sf2);
-}
+
 //ellipse(xmax+30,(ymax-ymin+5),2,2);
 
 translate((-(xmin)+30),abs(ymin)+5);
@@ -268,26 +267,19 @@ for(i=0;i<offsetted_paths.length;i++){
 }
 
 
+//console.log(ptabs);
 
-
-
+strokeWeight(3/sf2);
 
 for(i=0;i<offsetted_paths.length;i++){
 
 
-
-strokeWeight(4/sf2);
-
-stroke(0);
-
-
-strokeWeight(3/sf2);
-
-stroke(200,0,0);//second tab point
-ellipse(ptabs[i].X1,ptabs[i].Y1,2/sf2,2/sf2);
-stroke(0,100,0);//first tab point
-ellipse(ptabs[i].X2,ptabs[i].Y2,2/sf2,2/sf2);
-
+   if(ptabs[i].tab==true){
+      stroke(200,0,0);//second tab point
+      ellipse(ptabs[i].X1,ptabs[i].Y1,2/sf2,2/sf2);
+      stroke(0,100,0);//first tab point
+      ellipse(ptabs[i].X2,ptabs[i].Y2,2/sf2,2/sf2);
+   }
  
 }
 
@@ -573,35 +565,30 @@ delta.push([])
 for(i=0;i<delta.length;i++){
 
 //tabs
-var tab_length = Math.round(tool_diameter*1.5*25.4);
-//*2
+tab_length = parseInt(3+(Math.round(tool_diameter/2*25.4*document.getElementById("size").value)));
+
 
 if(Math.max.apply(Math, delta[i])>(tab_length*2)){
 
 
-tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false})
+tabs.push({X2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((-tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)))),Y2: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((-tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y/100) - (((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100)))),X1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100) - ((tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].X)/2)/100)-(offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].X/100)))),Y1: ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - ((tab_length/(delta[i][delta[i].indexOf(Math.max.apply(Math, delta[i]))]/2)) * ((((offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y+offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))+1].Y)/2)/100) - (offsetted_paths[i][(delta[i].indexOf(Math.max.apply(Math, delta[i])))].Y/100)))),line: (delta[i].indexOf(Math.max.apply(Math, delta[i]))), curve: false, tab:true})
 
+
+}
+else if(offsetted_paths[i].length>10){
+
+tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-(tab_length)].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-(tab_length)].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+tab_length].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+tab_length].Y/100,line: Math.round(delta[i].length/2)-(tab_length), curve: true,tab:true})
 
 }
 else{
-
-
-tabs.push({X1: offsetted_paths[i][Math.round(delta[i].length/2)-(tab_length)].X/100, Y1: offsetted_paths[i][Math.round(delta[i].length/2)-(tab_length)].Y/100,X2: offsetted_paths[i][Math.round(delta[i].length/2)+tab_length].X/100,Y2: offsetted_paths[i][Math.round(delta[i].length/2)+tab_length].Y/100,line: Math.round(delta[i].length/2)-(tab_length), curve: true})
+tabs.push({tab:false});
+}
 
 
 }
 
 
-   for(j=0;j<delta[i].length;j++){
-
-   
-
-   }
-
-}
-
-
-//console.log(tabs)
+console.log(tabs)
 ptabs = tabs
 
 xy_offset = []
@@ -616,6 +603,7 @@ xy_offset = []
    shape = []
    len = []
    svg = []
+   delta = []
 
 
 
@@ -668,7 +656,7 @@ while(pass<=pass_no){
 
 
 
-         if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false)){
+         if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false) && (tabs[i].tab==true)){
 
            g += ("g1x" + (tabs[i].X1.toFixed(3)/document.getElementById("size").value) + "y" + ((ymax-tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "\n")
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
@@ -677,7 +665,7 @@ while(pass<=pass_no){
            g +="g1f" + material.feed + "\n"
          }
 
-         else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true)){
+         else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true) && (tabs[i].tab==true)){
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
          }
          else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true)){
@@ -708,7 +696,7 @@ while(pass<=pass_no){
             g += "g1x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + '\n'
          }
 
-         if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false)){
+         if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false) && (tabs[i].tab==true)){
 
            g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "y" + ((tabs[i].X1)/document.getElementById("size").value).toFixed(3) + "\n")
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
@@ -717,10 +705,10 @@ while(pass<=pass_no){
            g +="g1f" + material.feed + "\n"
          }
 
-         else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true)){
+         else if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==true) && (tabs[i].tab==true)){
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n");
          }
-         else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true)){
+         else if(((j==tabs[i].line+5) && (pass==pass_no)) && (tabs[i].curve==true) && (tabs[i].tab==true)){
            g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
            g +="g1f" + material.feed + "\n"
          }     
@@ -759,7 +747,7 @@ $( "#keybutton" ).click(function() {
    }
    else{
       txt = "?"
-   loadtxt()
+      loadtxt()
 }
    
 
