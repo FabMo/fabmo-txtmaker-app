@@ -15,7 +15,28 @@
 <script src="js/snap.svg-min.js"></script>
 <script src="js/clipper.js"></script>
 
+<style>
 
+#loadfont {
+  position: relative;
+  overflow: hidden;
+  float: center;
+  margin-right: 4px;
+}
+#loadfont input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  direction: ltr;
+  cursor: pointer;
+}
+
+</style>
 </head>
 <body onload="reload();">
 
@@ -37,10 +58,12 @@
     <canvas id="2D" tabindex="1"> </canvas>
   </div>
   <div data-role="footer" style="text-align:center;">
-<!--
-      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-minus ui-btn-icon-left" onclick="scaleDown();">SIZE TXT</a>
-      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" onclick="scaleUp();">SIZE TXT</a>
--->
+
+    <span class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" id="loadfont" onclick="getFont();">
+       <span>LOAD FONT</span>
+       <input type="file" name="files[]" multiple data-role="none"/>
+    </span>
+
       <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TXT</a>
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
@@ -374,6 +397,8 @@ var material
 var delta = []
 var tabs = []
 var ptabs = []
+var exfont = false
+var font
 
 function reload(){
 
@@ -392,9 +417,16 @@ function reload(){
    offsetted_paths = []
    delta = []
    tabs=[]
-   delta=[] 
-   loadfont()
-   loadtxt()
+   delta=[]
+ 
+   if(exfont==false){   
+      loadfont()
+      loadtxt()
+   }
+   else{
+      loadtxt()
+   }
+
 
 }
 
@@ -407,6 +439,7 @@ function loadfont() {
 
 function loadtxt() {
 
+   if(exfont==false){
    opentype.load(fontFileName, function(err, font) 
    {
 
@@ -416,7 +449,11 @@ function loadtxt() {
       else {
       onFontLoaded(font)
       }
-});
+   });
+   }
+   else{
+   onFontLoaded(font) 
+   }
 
 }
 
@@ -785,11 +822,11 @@ $( "#keybutton" ).click(function() {
    txt = window.prompt("?")
 
    if(txt!=null){
-      loadtxt()
+      reload()
    }
    else{
       txt = "?"
-      loadtxt()
+      reload()
    }   
 });
 
@@ -809,6 +846,46 @@ function scaleDown(){
    console.log(s)
 }
 
+function getFont(){
+
+alert("Select a TTF File")
+
+}
+
+function onReadFile(evt) {
+
+   exfont = true
+   delta = []
+   tabs = []
+   pocket = []
+   pockets = []
+
+   
+    var f = evt.target.files[0]; 
+
+    if (f) {
+
+      var r = new FileReader();
+      r.onload = function(e) { 
+	     var contents = e.target.result;
+        
+        font = opentype.parse(e.target.result);
+        onFontLoaded(font);
+        
+      }
+        r.readAsArrayBuffer(f);
+
+    } else { 
+      alert("Failed to load file");
+    }
+
+}
+
+document.getElementById('font').addEventListener('click', function(){
+    exfont = false
+});
+
+document.getElementById('loadfont').addEventListener('change', onReadFile, false);
 
 // toggle full screen
 function toggleFullScreen() {
