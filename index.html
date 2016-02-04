@@ -5,8 +5,12 @@
 <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
 
 
-<script src="js/libs/dashboard.js"></script>
+
 <script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/libs/fabmo.js"></script>
+    <script type="text/javascript">
+        var fabmo = new FabMoDashboard();
+    </script>
 <script src="js/control.js"></script>
 <script src="js/config.js"></script>
 <script src="js/jquery.mobile-1.4.5.js"></script>
@@ -809,7 +813,12 @@ g+="m30\n"
 
 //console.log(g);
 
-fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value})
+fabmo.submitJob({
+   file : g,
+   filename : txt + '.g',
+   name : "TEXT: " + txt,
+   description : "FONT: " + document.getElementById("font").value 
+});
 
 }
 
