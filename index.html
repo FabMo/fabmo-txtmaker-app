@@ -7,10 +7,7 @@
 
 
 <script src="js/jquery-1.11.2.min.js"></script>
-<script src="js/libs/fabmo.js"></script>
-    <script type="text/javascript">
-        var fabmo = new FabMoDashboard();
-    </script>
+<script src="js/libs/fabmo.min.js"></script>
 <script src="js/control.js"></script>
 <script src="js/config.js"></script>
 <script src="js/jquery.mobile-1.4.5.js"></script>
@@ -46,8 +43,10 @@
 
 <div data-role="page" id="pageone">
   <div data-role="header">
-      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+		<!--      
+		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>		
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left" onclick="info();">JOB INFO</a> 
+		-->
     <h1>PRESS A KEY</h1>
 
     <div data-role="navbar">
@@ -365,6 +364,8 @@ loadtxt();
 </script>
 
 <script>
+
+var fabmo = new FabMoDashboard();
 
 var g = ""
 var gcode = []                     
