@@ -1,6 +1,6 @@
 
 {
-	"name":"TxtMaker",
+	"name":"TextMaker",
 	"repository":"https://github.com/FabMo/fabmo-txtmaker-app.git",
 	"license":"MIT",
 	"main":"./index.html",
