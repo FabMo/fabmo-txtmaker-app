@@ -8,8 +8,6 @@
 
 <script src="js/jquery-1.11.2.min.js"></script>
 <script src="js/libs/fabmo.min.js"></script>
-<script src="js/control.js"></script>
-<script src="js/config.js"></script>
 <script src="js/jquery.mobile-1.4.5.js"></script>
 <script src="js/processing.min.js"></script>
 <script src="js/opentype.min.js"></script>
@@ -37,9 +35,20 @@
   cursor: pointer;
 }
 
+#textInput{
+	display:none;
+	position:absolute;
+	background:#fff;
+	left:10px;
+	width:30%;
+
+}
+
 </style>
 </head>
 <body onload="reload();">
+
+
 
 <div data-role="page" id="pageone">
   <div data-role="header">
@@ -47,7 +56,9 @@
 		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>		
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left" onclick="info();">JOB INFO</a> 
 		-->
-    <h1>PRESS A KEY</h1>
+		
+
+    <h1>PRESS A KEY OR EDIT TEXT IN SETUP</h1>
 
     <div data-role="navbar">
       <ul>
@@ -59,6 +70,7 @@
   </div>
   <div data-role="main" class="ui-content">
     <canvas id="2D" tabindex="1"> </canvas>
+	
   </div>
   <div data-role="footer" style="text-align:center;">
 
@@ -66,8 +78,9 @@
        <span>LOAD FONT</span>
        <input type="file" name="files[]" multiple data-role="none"/>
     </span>
-
+		<!--
       <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TXT</a>
+		-->
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
 </div> 
@@ -90,6 +103,20 @@
 
     <form method="post">
       <fieldset class="ui-field-contain">
+        <label for="textInput">TEXT</label>
+			<input type='text' id="txt" value="text"/>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="size">FONT SIZE (inch)</label>
+			<input type="number" id="size" value="2" step="0.1"></input>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
         <label for="font">FONT</label>
         <select name="font" id="font">
           <option value="ChicagoFLF.ttf">Chicago</option>
@@ -97,24 +124,6 @@
           <option value="newmars.ttf">New Mars</option>
           <option value="Roboto-Black.ttf">Roboto</option>
           <option value="Ubuntu-Title.ttf">Ubuntu</option>
-        </select>
-      </fieldset>
-    </form>
-
-    <form method="post">
-      <fieldset class="ui-field-contain">
-        <label for="size">FONT SIZE</label>
-        <select name="size" id="size">
-
-          <option value="12">1/2"</option>
-          <option value="6">1"</option>
-          <option value="3">2"</option>
-          <option value="2">3"</option>
-          <option value="1.5" selected>4"</option>
-          <option value="1.2">5"</option>
-          <option value="1">6"</option> 
-
-
         </select>
       </fieldset>
     </form>
@@ -168,6 +177,7 @@
 
     <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">MAKE TXT</a>
   </div>
+
 </div> 
 
 
@@ -218,8 +228,6 @@ else{
 }
 
 
-//ellipse(xmax+30,(ymax-ymin+5),2,2);
-
 translate((-(xmin)+30),abs(ymin)+5);
 
 if(xmax<140){
@@ -232,9 +240,7 @@ else{
 }
 strokeWeight(1/sf2);
 
-
-text(nf((abs(ymin)+ymax+s)/document.getElementById("size").value/25.4,1,2) + "\"", nf(xmin-25,1,0), nf(ymin/2,1,0));
-
+text(nf((abs(ymin)+ymax)/(6/(document.getElementById("size").value*scaleUp))/25.4,1,2) + "\"", nf(xmin-25,1,0), nf(ymin/2,1,0));
 
 line(xmin-5,ymax,xmin-8,ymax);
 line(xmin-8,ymin,xmin-8,ymax);
@@ -254,7 +260,7 @@ line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
-text(nf((xmax-xmin+s)/document.getElementById("size").value/25.4,1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+15,1,0));
+text(nf((xmax-xmin)/(6/(document.getElementById("size").value*scaleUp))/25.4,1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+15,1,0));
 
 noFill();
 
@@ -349,21 +355,27 @@ noFill();
 
 void keyPressed() {
 
-
+console.log(txt);
 txt = String.fromCharCode(key);
 
 delta = [];
 tabs = [];
 
+
+document.getElementById('txt').value=txt
 loadtxt();
 
 }
 
 
-
 </script>
 
 <script>
+
+
+//TODO
+
+//replace prompt and processing
 
 var fabmo = new FabMoDashboard();
 
@@ -379,14 +391,14 @@ var test = []
 var test2 = []
 var len = []
 var points = []
-var txt = "?"
+var txt
 var xy = []
 var xy_offset = []
 //var keyz;
 var oset = [[0,1]]
 var dots = []
 var tool_diameter
-var s = 0
+var scaleUp = 1
 
 var curve = ""
 var curve_length
@@ -423,6 +435,7 @@ function reload(){
    delta = []
    tabs=[]
    delta=[]
+	txt=document.getElementById('txt').value
  
    if(exfont==false){   
       loadfont()
@@ -465,7 +478,7 @@ function loadtxt() {
 function onFontLoaded(font) {
 
 
-//var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
+//var path = font.getPath(txt, 0, 0, (6/(document.getElementById("size").value*scaleUp)))
 var path = font.getPath(txt, 0, 0, 152.4)
 
 
@@ -591,7 +604,11 @@ else{
    ymax = (Math.max.apply(Math, y))
 }
 
-
+scaleUp = document.getElementById('size').value / ( (Math.abs(ymin)+ymax)/(6/(document.getElementById("size").value))/25.4 )
+//console.log(document.getElementById('size').value)
+//console.log( (Math.abs(ymin)+ymax)/(6/(document.getElementById("size").value*scaleUp))/25.4 )
+console.log(size)
+console.log( (((6/(document.getElementById("size").value*scaleUp))/25.4)*scaleUp) )
 
 
 tool_diameter=document.getElementById("tool").value
@@ -602,7 +619,7 @@ ClipperLib.JS.ScaleUpPaths(points, scale)
 
 var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
 
-var co = new ClipperLib.ClipperOffset(((tool_diameter/2*25.4)*document.getElementById("size").value), 0.25)
+var co = new ClipperLib.ClipperOffset(((tool_diameter/2*25.4)*(6/(document.getElementById("size").value*scaleUp))), 0.25)
 co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
 offsetted_paths = new ClipperLib.Paths()
 
@@ -610,7 +627,7 @@ if(document.getElementById("cutonswitch").checked==true){
    co.Execute(offsetted_paths, 0)
 }
 else{
-   co.Execute(offsetted_paths, ((tool_diameter/2*25.4)*document.getElementById("size").value) * scale)
+   co.Execute(offsetted_paths, ((tool_diameter/2*25.4)*(6/(document.getElementById("size").value*scaleUp))) * scale)
 }
 
 for(i=0;i<offsetted_paths.length;i++){
@@ -635,7 +652,7 @@ delta.push([])
 for(i=0;i<delta.length;i++){
 
 //tabs
-tab_length = parseInt(3+(Math.round(tool_diameter/2*25.4*document.getElementById("size").value)));
+tab_length = parseInt(3+(Math.round(tool_diameter/2*25.4*(6/(document.getElementById("size").value*scaleUp)))));
 
 
 if(Math.max.apply(Math, delta[i])>(tab_length*2)){
@@ -658,7 +675,7 @@ tabs.push({tab:false});
 }
 
 
-console.log(tabs)
+//console.log(tabs)
 ptabs = tabs
 
 xy_offset = []
@@ -719,7 +736,7 @@ while(pass<=pass_no){
 
          if((j==0) && (pass==1)){
             g +="g0z5\n"
-            g += "g0x" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + '\n'
+            g += "g0x" + ((offsetted_paths[i][j].X/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + '\n'
             g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n"
             g +="g1f" + material.feed + "\n"         
 
@@ -730,16 +747,16 @@ while(pass<=pass_no){
             g +="g1f" + material.feed + "\n"
          }   
          else{
-            g += "g1x" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + '\n'
+            g += "g1x" + ((offsetted_paths[i][j].X/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((ymax-offsetted_paths[i][j].Y/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + '\n'
          }
 
          if(document.getElementById("tabswitch").checked==true){
 
          if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false) && (tabs[i].tab==true)){
 
-           g += ("g1x" + (tabs[i].X1.toFixed(3)/document.getElementById("size").value) + "y" + ((ymax-tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g1x" + (tabs[i].X1.toFixed(3)/(6/(document.getElementById("size").value*scaleUp))) + "y" + ((ymax-tabs[i].Y1)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "\n")
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
-           g += ("g1x" + (tabs[i].X2/document.getElementById("size").value).toFixed(3) + "y" + ((ymax-tabs[i].Y2)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g1x" + (tabs[i].X2/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((ymax-tabs[i].Y2)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "\n")
            g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
            g +="g1f" + material.feed + "\n"
          }
@@ -762,7 +779,7 @@ while(pass<=pass_no){
 
           if((j==0) && (pass==1)){
             g +="g0z5\n"
-            g += "g0x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + '\n'
+            g += "g0x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + '\n'
             g +="g1z-" + (pass_depth*25.4).toFixed(3) + "f" + material.plunge + "\n"
             g +="g1f" + material.feed + "\n"
 
@@ -772,16 +789,16 @@ while(pass<=pass_no){
             g +="g1f" + material.feed + "\n"
          }            
          else{
-            g += "g1x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/document.getElementById("size").value).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/document.getElementById("size").value).toFixed(3) + '\n'
+            g += "g1x" + ((Math.abs(ymin) + offsetted_paths[i][j].Y/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((offsetted_paths[i][j].X/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + '\n'
          }
 
          if(document.getElementById("tabswitch").checked==true){
 
          if(((j==tabs[i].line) && (pass==pass_no)) && (tabs[i].curve==false) && (tabs[i].tab==true)){
 
-           g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y1)/document.getElementById("size").value).toFixed(3) + "y" + ((tabs[i].X1)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y1)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((tabs[i].X1)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "\n")
            g += ("g0z-" + (pass_depth*(pass-1)*25.4) + "\n")
-           g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y2)/document.getElementById("size").value).toFixed(3) + "y" + ((tabs[i].X2)/document.getElementById("size").value).toFixed(3) + "\n")
+           g += ("g1x" + ((Math.abs(ymin) + tabs[i].Y2)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "y" + ((tabs[i].X2)/(6/(document.getElementById("size").value*scaleUp))).toFixed(3) + "\n")
            g += ("g1z-" + (((pass_depth*pass)*25.4)) + "f" + material.plunge + "\n")
            g +="g1f" + material.feed + "\n"
          }
@@ -842,8 +859,8 @@ $( "#keybutton" ).click(function() {
 
 function info(){
 
-   alert("text: " + txt + "\nfont: " + document.getElementById("font").value + "\ntabs: " + document.getElementById("tabswitch").checked + "\ncut on line: " + document.getElementById("cutonswitch").checked)
-
+   //alert("text: " + txt + "\nfont: " + document.getElementById("font").value + "\ntabs: " + document.getElementById("tabswitch").checked + "\ncut on line: " + document.getElementById("cutonswitch").checked)
+	//fabmo.notify("text","text: " + txt + "\nfont: " + document.getElementById("font").value + "\ntabs: " + document.getElementById("tabswitch").checked + "\ncut on line: " + document.getElementById("cutonswitch").checked)
 }
 
 function scaleUp(){
