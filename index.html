@@ -52,11 +52,7 @@
 
 <div data-role="page" id="pageone">
   <div data-role="header">
-		<!--      
-		<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>		
-      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left" onclick="info();">JOB INFO</a> 
-		-->
-		
+
 
     <h1>PRESS A KEY OR EDIT TEXT IN SETUP</h1>
 
@@ -78,9 +74,7 @@
        <span>LOAD FONT</span>
        <input type="file" name="files[]" multiple data-role="none"/>
     </span>
-		<!--
-      <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TXT</a>
-		-->
+
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
 </div> 
@@ -312,15 +306,11 @@ for(i=0;i<offsetted_paths.length;i++){
    beginShape();
       for(j=0;j<offsetted_paths[i].length;j++){
          vertex(offsetted_paths[i][j].X/100,offsetted_paths[i][j].Y/100);
-//         strokeWeight(1/sf2);
-//         ellipse(offsetted_paths[i][j].X/100,offsetted_paths[i][j].Y/100,2/sf2,2/sf2);
-      }
+     }
    endShape();
 
 }
 
-
-//console.log(ptabs);
 
 strokeWeight(3/sf2);
 
@@ -375,7 +365,6 @@ loadtxt();
 
 //TODO
 
-//replace prompt and processing
 
 var fabmo = new FabMoDashboard();
 
@@ -477,8 +466,6 @@ function loadtxt() {
 
 function onFontLoaded(font) {
 
-
-//var path = font.getPath(txt, 0, 0, (6/(document.getElementById("size").value*scaleUp)))
 var path = font.getPath(txt, 0, 0, 152.4)
 
 
@@ -605,11 +592,6 @@ else{
 }
 
 scaleUp = document.getElementById('size').value / ( (Math.abs(ymin)+ymax)/(6/(document.getElementById("size").value))/25.4 )
-//console.log(document.getElementById('size').value)
-//console.log( (Math.abs(ymin)+ymax)/(6/(document.getElementById("size").value*scaleUp))/25.4 )
-console.log(size)
-console.log( (((6/(document.getElementById("size").value*scaleUp))/25.4)*scaleUp) )
-
 
 tool_diameter=document.getElementById("tool").value
 
@@ -674,8 +656,6 @@ tabs.push({tab:false});
 
 }
 
-
-//console.log(tabs)
 ptabs = tabs
 
 xy_offset = []
@@ -697,7 +677,6 @@ xy_offset = []
 
 material = eval('({' + (document.getElementById("material").value) + '})')
 
-//console.log(material.plunge)
 
 }
 
@@ -858,7 +837,6 @@ $( "#keybutton" ).click(function() {
 });
 
 function info(){
-
    //alert("text: " + txt + "\nfont: " + document.getElementById("font").value + "\ntabs: " + document.getElementById("tabswitch").checked + "\ncut on line: " + document.getElementById("cutonswitch").checked)
 	//fabmo.notify("text","text: " + txt + "\nfont: " + document.getElementById("font").value + "\ntabs: " + document.getElementById("tabswitch").checked + "\ncut on line: " + document.getElementById("cutonswitch").checked)
 }
@@ -914,27 +892,7 @@ document.getElementById('font').addEventListener('click', function(){
 
 document.getElementById('loadfont').addEventListener('change', onReadFile, false);
 
-// toggle full screen
-function toggleFullScreen() {
-  if (!document.fullscreenElement &&    // alternative standard method
-      !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen()
-    } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen()
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
-    }
-  } else {
-    if (document.cancelFullScreen) {
-      document.cancelFullScreen()
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen()
-    } else if (document.webkitCancelFullScreen) {
-      document.webkitCancelFullScreen()
-    }
-  }
-}
+
 
 </script>
 
